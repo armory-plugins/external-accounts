@@ -10,8 +10,8 @@ import org.jetbrains.annotations.NotNull;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Loads account credentials from a directory recursively.
@@ -20,15 +20,15 @@ import java.util.List;
 public class DirectoryCredentialsLoader<T extends CredentialsDefinition> implements CredentialsDefinitionSource<T> {
 
     private final Path dir;
-    private final String filePrefix;
+    private final Set<String> filePrefixes;
     private final Class<T> classType;
     private final SecretManager secretManager;
 
-    public DirectoryCredentialsLoader(Path dir, String filePrefix, Class<T> classType, SecretManager secretManager) {
+    public DirectoryCredentialsLoader(Path dir, Class<T> classType, SecretManager secretManager, String... filePrefixes) {
         this.dir = dir;
-        this.filePrefix = filePrefix;
         this.classType = classType;
         this.secretManager = secretManager;
+        this.filePrefixes = Arrays.stream(filePrefixes).collect(Collectors.toSet());
     }
 
     @NotNull
@@ -42,7 +42,7 @@ public class DirectoryCredentialsLoader<T extends CredentialsDefinition> impleme
         }
         FileUtils.listFiles(dir.toFile(), new String[]{"yml", "yaml", "json"}, true)
                 .stream()
-                .filter(f -> f.getName().startsWith(filePrefix))
+                .filter(f -> filePrefixes.stream().anyMatch(p -> f.getName().startsWith(p)))
                 .forEach(f -> addCredentials(f, result));
         log.debug("Loaded {} credentials of type {}", result.size(), classType.getCanonicalName());
         return result;

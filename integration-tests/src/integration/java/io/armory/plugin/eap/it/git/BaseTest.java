@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.armory.plugin.eap.it;
+package io.armory.plugin.eap.it.git;
 
 import com.netflix.spinnaker.clouddriver.Main;
 import io.armory.plugin.eap.it.utils.GitContainer;
@@ -30,10 +30,10 @@ import static org.junit.jupiter.api.Assertions.fail;
 @SpringBootTest(
         classes = {Main.class},
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@TestPropertySource(properties = {"spring.config.location = classpath:clouddriver-sshauth.yml"})
+@TestPropertySource(properties = {"spring.config.location = classpath:clouddriver-git.yml"})
 public abstract class BaseTest {
 
-    public static final int ACCOUNTS_REGISTERED_TIMEOUT_SEC = 20;
+    public static final int ACCOUNTS_REGISTERED_TIMEOUT_SEC = 40;
     public static GitContainer gitContainer = new GitContainer("ssh");
 
     static {
