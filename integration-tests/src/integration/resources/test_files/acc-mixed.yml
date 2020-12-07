@@ -1,0 +1,30 @@
+kubernetes:
+  accounts:
+    - name: kube
+      cacheIntervalSeconds: 30
+      requiredGroupMembership: []
+      providerVersion: V2
+      permissions: {}
+      dockerRegistries: []
+      configureImagePullSecrets: true
+      cacheThreads: 1
+      namespaces: []
+      omitNamespaces: []
+      kinds: []
+      omitKinds: []
+      customResources: []
+      cachingPolicies: []
+      oauthScopes: []
+      oAuthScopes: []
+      onlySpinnakerManaged: true
+      metrics: false
+      serviceAccount: true
+
+cloudfoundry:
+  accounts:
+    - name: cf
+      password: supersecret
+      user: user
+      skipSslValidation: false
+      api: mydomain.com
+      appsManagerUri: https://mydomain.com

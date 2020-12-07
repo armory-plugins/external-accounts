@@ -1,0 +1,57 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+}
+
+apply plugin: "io.spinnaker.plugin.service-extension"
+apply plugin: "maven-publish"
+
+sourceCompatibility = 1.11
+targetCompatibility = 1.11
+
+spinnakerPlugin {
+    serviceName = "clouddriver"
+    pluginClass = "io.armory.plugin.eap.EAPPlugin"
+    requires="clouddriver>=0.0.0"
+}
+
+dependencies {
+    compileOnly(group: 'org.pf4j', name: 'pf4j', version: "${pf4jVersion}")
+    compileOnly(group: 'com.netflix.spinnaker.kork', name: 'kork-plugins', version: "${korkVersion}")
+    compileOnly(group: 'com.netflix.spinnaker.kork', name: 'kork-plugins-spring-api', version: "${korkVersion}")
+    compileOnly(group: 'com.netflix.spinnaker.kork', name: 'kork-credentials-api', version: "${korkVersion}")
+    compileOnly(group: 'com.netflix.spinnaker.kork', name: 'kork-secrets', version: "${korkVersion}")
+    compileOnly(group: 'com.netflix.spinnaker.clouddriver', name: 'clouddriver-api', version: "${clouddriverVersion}")
+    compileOnly(group: 'com.netflix.spinnaker.clouddriver', name: 'clouddriver-core', version: "${clouddriverVersion}")
+    compileOnly(group: 'com.netflix.spinnaker.clouddriver', name: 'clouddriver-security', version: "${clouddriverVersion}")
+    compileOnly(group: 'com.netflix.spinnaker.clouddriver', name: 'clouddriver-kubernetes', version: "${clouddriverVersion}")
+    compileOnly(group: 'com.netflix.spinnaker.clouddriver', name: 'clouddriver-cloudfoundry', version: "${clouddriverVersion}")
+    compileOnly(group: 'com.netflix.spinnaker.clouddriver', name: 'clouddriver-aws', version: "${clouddriverVersion}")
+    compileOnly(group: 'com.netflix.spinnaker.clouddriver', name: 'clouddriver-ecs', version: "${clouddriverVersion}")
+    compileOnly(group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.11.2')
+    compileOnly(group: 'org.projectlombok', name: 'lombok', version: '1.18.12')
+    compileOnly(group: 'com.google.guava', name: 'guava', version: '28.2-jre')
+    compileOnly(group: 'org.eclipse.jgit', name: 'org.eclipse.jgit', version: '5.7.0.202003110725-r')
+    compileOnly(group: 'org.yaml', name: 'snakeyaml', version: '1.26')
+    annotationProcessor(group: 'org.projectlombok', name: 'lombok', version: '1.18.12')
+
+    implementation(group: 'commons-io', name: 'commons-io', version: '2.6')
+
+    testImplementation "org.junit.jupiter:junit-jupiter-api:5.6.2"
+    testImplementation "org.junit.jupiter:junit-jupiter-params:5.6.2"
+    testImplementation "org.junit.platform:junit-platform-runner:1.6.2"
+    testImplementation "org.mockito:mockito-all:1.10.9"
+    testImplementation(group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.11.2')
+    testImplementation(group: 'com.netflix.spinnaker.kork', name: 'kork-secrets', version: "${korkVersion}")
+    testImplementation(group: 'com.netflix.spinnaker.kork', name: 'kork-credentials-api', version: "${korkVersion}")
+    testImplementation(group: 'com.google.guava', name: 'guava', version: '28.2-jre')
+    testImplementation(group: 'com.netflix.spinnaker.clouddriver', name: 'clouddriver-kubernetes', version: "${clouddriverVersion}")
+    testImplementation(group: 'com.netflix.spinnaker.clouddriver', name: 'clouddriver-cloudfoundry', version: "${clouddriverVersion}")
+    testImplementation(group: 'com.netflix.spinnaker.clouddriver', name: 'clouddriver-aws', version: "${clouddriverVersion}")
+    testImplementation(group: 'com.netflix.spinnaker.clouddriver', name: 'clouddriver-ecs', version: "${clouddriverVersion}")
+}
+
+tasks.withType(Test) {
+    useJUnitPlatform()
+}

@@ -1,0 +1,14 @@
+cloudfoundry:
+  accounts:
+    - name: cf
+      password: supersecret
+      user: user
+      skipSslValidation: false
+      api: mydomain.com
+      appsManagerUri: https://mydomain.com
+    - name: cf
+      password: supersecret
+      user: user
+      skipSslValidation: false
+      api: mydomain.com
+      appsManagerUri: https://mydomain.com

@@ -1,0 +1,16 @@
+rootProject.name='eap'
+
+include 'clouddriver',
+        'integration-tests'
+
+def setBuildFile(project) {
+    project.buildFileName = "${project.name}.gradle"
+    project.children.each {
+        setBuildFile(it)
+    }
+}
+
+rootProject.children.each {
+    setBuildFile(it)
+}
+

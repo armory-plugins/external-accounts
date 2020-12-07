@@ -1,0 +1,63 @@
+buildscript {
+    repositories {
+        jcenter()
+        maven { url 'https://dl.bintray.com/spinnaker/gradle/' }
+        maven { url "https://plugins.gradle.org/m2/" }
+    }
+    dependencies {
+        classpath "org.junit.platform:junit-platform-gradle-plugin:${junitPlatformVersion}"
+    }
+}
+
+plugins {
+    id("io.spinnaker.plugin.bundler").version("$spinnakerGradleVersion")
+    id "com.palantir.docker" version "0.25.0"
+}
+
+apply plugin: "io.spinnaker.plugin.bundler"
+
+version = normalizedVersion()
+
+spinnakerBundle {
+    pluginId = "Armory.EAP"
+    description = "Dynamically load accounts from different sources"
+    provider = "https://armory.io"
+    version = rootProject.version
+}
+
+subprojects { project ->
+    group = "io.armory.plugin.eap"
+    version = rootProject.version
+    apply plugin: "maven-publish"
+
+    repositories {
+        mavenCentral()
+        jcenter()
+        maven { url "https://spinnaker-releases.bintray.com/jars" }
+        maven { url "http://dl.bintray.com/spinnaker/spinnaker/" }
+    }
+}
+
+task version() {
+    println(version)
+}
+
+docker {
+    dockerfile project.file("build-tools/Dockerfile")
+    def registry = System.getenv('REGISTRY') ?: "docker.io"
+    def registryOrg = System.getenv('REGISTRY_ORG') ?: "armory"
+    name "$registry/$registryOrg/kubesvc-plugin:$version"
+    files project.file("build/distributions"), project.file("build-tools/install.sh")
+    buildArgs([PLUGIN_ID: "kubesvc-$version"])
+    copySpec.from("build/distributions").into("distributions")
+}
+
+String normalizedVersion() {
+    new ByteArrayOutputStream().withStream { os ->
+        exec {
+            executable = "$projectDir/build-tools/version.sh"
+            standardOutput = os
+        }
+        ext.version = os.toString().trim()
+    }
+}

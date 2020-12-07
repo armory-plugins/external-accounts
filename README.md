@@ -1,4 +1,4 @@
-## dynamicaccounts-git-plugin
+## external-accounts
 
-Dynamically read accounts from a git repository
+Dynamically read accounts from external sources
 

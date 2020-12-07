@@ -1,0 +1,8 @@
+[user]
+	email = gitea@fake.local
+	name = Gitea
+[core]
+	quotepath = false
+	commitGraph = true
+[gc]
+	writeCommitGraph = true

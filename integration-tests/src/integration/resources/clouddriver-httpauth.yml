@@ -1,0 +1,71 @@
+armory:
+  dag:
+    repo: git # Dynamically set at runtime
+    branch: master
+    refreshIntervalSeconds: 5
+    configDir: ""
+    configFilePrefix: acc
+    username: test
+    password: -qhn2MJrjQ*hTq8c
+
+credentials:
+  poller:
+    enabled: true
+    types:
+      kubernetes:
+        reloadFrequencyMs: 5000
+      cloudfoundry:
+        reloadFrequencyMs: 5000
+
+kubernetes:
+  enabled: true
+
+spinnaker:
+  extensibility:
+    pluginsRootPath: ${PROJECT_ROOT}/build/distributions
+    plugins:
+      Armory.EAP:
+        enabled: true
+
+spring:
+  application:
+    name: clouddriver
+
+logging.level.org.pf4j: DEBUG
+logging.level.io.armory.plugin.eap: DEBUG
+logging.level.com.netflix.spinnaker.clouddriver.kubernetes.security: OFF
+logging.level.com.netflix.spinnaker.clouddriver.kubernetes.caching.agent: OFF
+
+sql:
+  enabled: true
+  taskRepository:
+    enabled: true
+  cache:
+    enabled: true
+    readBatchSize: 500
+    writeBatchSize: 300
+  scheduler:
+    enabled: true
+  connectionPools:
+    default:
+      default: true
+      jdbcUrl: jdbc:tc:mysql:5.7.22://somehostname:someport/clouddriver?user=root?password=&
+    tasks:
+      jdbcUrl: jdbc:tc:mysql:5.7.22://somehostname:someport/clouddriver?user=root?password=&
+  migration:
+    jdbcUrl: jdbc:tc:mysql:5.7.22://somehostname:someport/clouddriver?user=root?password=&
+
+redis:
+  enabled: false
+  cache:
+    enabled: false
+  scheduler:
+    enabled: false
+  taskRepository:
+    enabled: false
+
+services:
+  fiat:
+    baseUrl: http://fiat.net
+  front50:
+    baseUrl: http://front50.net

@@ -1,0 +1,74 @@
+plugins {
+  id 'com.adarshr.test-logger' version '2.1.0'
+}
+
+repositories {
+  mavenCentral()
+  jcenter()
+  maven { url "https://spinnaker-releases.bintray.com/jars" }
+  maven { url "http://dl.bintray.com/spinnaker/spinnaker/" }
+}
+
+apply plugin: "java-library"
+
+sourceSets {
+  integration {
+    java.srcDirs = ["src/integration/java"]
+    resources.srcDirs = ["src/integration/resources"]
+  }
+}
+
+configurations {
+  integrationImplementation.extendsFrom testImplementation
+  integrationRuntime.extendsFrom testRuntime
+}
+
+dependencies {
+  integrationImplementation project(":clouddriver")
+
+  integrationImplementation "com.netflix.spinnaker.clouddriver:clouddriver-web:$clouddriverVersion"
+
+  integrationImplementation "org.springframework.boot:spring-boot-starter-test:2.2.5.RELEASE"
+  integrationImplementation "org.testcontainers:testcontainers:1.15.0"
+  integrationImplementation "org.testcontainers:mysql:1.15.0"
+  integrationImplementation "org.testcontainers:junit-jupiter:1.15.0"
+  integrationImplementation "com.google.code.gson:gson:2.8.6"
+  integrationImplementation "com.fasterxml.jackson.core:jackson-core:2.11.2"
+  integrationImplementation "com.fasterxml.jackson.core:jackson-annotations:2.11.2"
+  integrationImplementation "com.fasterxml.jackson.core:jackson-databind:2.11.2"
+  integrationImplementation "com.google.guava:guava:28.2-jre"
+  integrationImplementation "mysql:mysql-connector-java:8.0.20"
+  integrationImplementation ("io.rest-assured:rest-assured:4.0.0") {
+    // Exclude groovy pulled in by rest-assured, so we use kork's version
+    exclude group: "org.codehaus.groovy", module: "groovy"
+  }
+  integrationImplementation "org.yaml:snakeyaml:1.26"
+  integrationImplementation "org.projectlombok:lombok:1.18.12"
+}
+
+task integrationTest(type: Test) {
+  description = 'Runs integration tests.'
+  group = 'verification'
+  dependsOn(':releaseBundle')
+
+  environment "PROJECT_ROOT", project.rootDir.toString()
+  environment "BUILD_DIR", "$buildDir"
+  environment "GIT_ROOT", "$project.rootDir/integration-tests/src/integration/gitea_data"
+  environment "SSH_KEYS", "$project.rootDir/integration-tests/src/integration/resources/ssh"
+  environment "KUBECTL_PATH", "$project.rootDir/integration-tests/src/upstream/resources/kubectl-wrapper.sh"
+  environment "CACHE_THREADS", "1"
+
+  useJUnitPlatform()
+
+  testClassesDirs = sourceSets.integration.output.classesDirs
+  classpath = sourceSets.integration.runtimeClasspath
+  shouldRunAfter test
+
+  testlogger {
+    theme 'standard'
+    showStandardStreams true
+    showPassedStandardStreams false
+    showFailedStandardStreams true
+    showPassed false
+  }
+}
