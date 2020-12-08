@@ -1,0 +1,108 @@
+name: Build
+on:
+  push:
+    branches:
+      - master
+      - release-*
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-java@v1
+        with:
+          java-version: 11
+
+      - uses: actions/cache@v1
+        with:
+          path: ~/.gradle
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: Checkout Code
+        uses: actions/checkout@v2
+
+      - name: Fetch full history
+        run: git fetch --prune --tags --unshallow
+
+      - name: Determine build type
+        id: build_type
+        run: |
+          echo "github.ref: ${{ github.ref }}"
+          echo "github.base_ref: ${{ github.base_ref }}"
+          echo "github.head_ref: ${{ github.head_ref }}"
+          echo "branch: $(git rev-parse --abbrev-ref HEAD)"
+
+          if [[ ${{github.event_name }} = "pull_request" ]] ; then
+            export BRANCH=${{ github.head_ref }}
+          else
+            export BRANCH=$(git rev-parse --abbrev-ref HEAD)
+          fi
+
+          # On PRs to release branches, build RC releases for target release branch
+          if [[ "${{github.event_name }}" = "pull_request" && "${{ github.base_ref }}" =~ ^release-* ]]
+          then
+            echo "Building release candidate"
+            export VERSION_TYPE=rc
+            export BRANCH=${{ github.base_ref }}
+
+          # On any build running on master branch, build RC versions
+          elif [[ "${{ github.ref }}" = "refs/heads/master" ]]
+          then
+            echo "Building release candidate"
+            export VERSION_TYPE=rc
+
+          # On any build running on release branches, build final release
+          elif [[ "${{ github.ref }}" =~ ^refs/heads/release-* ]]
+          then
+            echo "Building final release"
+            export VERSION_TYPE=release
+
+          else
+            echo "Building snapshot"
+            export VERSION_TYPE=snapshot
+          fi
+
+          version=$(./build-tools/version.sh)
+          echo "Version: $version"
+
+          # Make sure the version can be used as a tag
+          git tag v$version
+          git tag -d v$version
+
+          echo "##[set-output name=version_type;]$VERSION_TYPE"
+          echo "##[set-output name=branch;]$BRANCH"
+          echo "##[set-output name=version;]$version"
+
+      - name: Build
+        run: |
+          VERSION_TYPE=${{ steps.build_type.outputs.version_type }} BRANCH=${{ steps.build_type.outputs.branch }} ./gradlew releaseBundle -x test
+
+      - name: Unit tests
+        run: |
+          VERSION_TYPE=${{ steps.build_type.outputs.version_type }} BRANCH=${{ steps.build_type.outputs.branch }} ./gradlew test --info
+
+      - name: Build Image
+        run: |
+          VERSION_TYPE=${{ steps.build_type.outputs.version_type }} BRANCH=${{ steps.build_type.outputs.branch }} ./gradlew docker --info
+
+      - name: Publish image
+        if: steps.build_type.outputs.version_type == 'rc' || steps.build_type.outputs.version_type == 'release'
+        run: |
+          echo "Logging in to dockerhub"
+          docker login -u '${{ secrets.DOCKERHUB_USER }}' -p '${{ secrets.DOCKERHUB_PASSWORD }}' docker.io
+          VERSION_TYPE=${{ steps.build_type.outputs.version_type }} BRANCH=${{ steps.build_type.outputs.branch }} ./gradlew dockerPush
+
+      - name: Push git tag
+        if: steps.build_type.outputs.version_type == 'rc' || steps.build_type.outputs.version_type == 'release'
+        run: |
+          git tag v${{ steps.build_type.outputs.version }}
+          git push origin v${{ steps.build_type.outputs.version }}
+
+      - name: Publish plugin to artifactory
+        if: steps.build_type.outputs.version_type == 'rc' || steps.build_type.outputs.version_type == 'release'
+        run: |
+          curl -H "Authorization: Bearer ${{ secrets.ARTIFACTORY_TOKEN }}" -X PUT "https://armory.jfrog.io/artifactory/plugins/appname/${{ steps.build_type.outputs.version }}/appNamePlugin-${{ steps.build_type.outputs.version }}.zip" -T build/distributions/appNamePlugin-${{ steps.build_type.outputs.version }}.zip
+          curl -H "Authorization: Bearer ${{ secrets.ARTIFACTORY_TOKEN }}" -X PUT "https://armory.jfrog.io/artifactory/plugins/appname/plugins.json" -T build/distributions/plugins-remote.json

@@ -9,6 +9,8 @@ armory:
       sshPrivateKeyPassphrase: PiqPb2m_FodJmV.L
       sshKnownHostsFilePath: ${SSH_KEYS}/known_hosts
       sshTrustUnknownHosts: false
+      configFilePrefix:
+        default: clouddriver
 
 credentials:
   poller:

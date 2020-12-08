@@ -10,6 +10,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.PostConstruct;
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Path;
@@ -36,19 +37,21 @@ public class EAPConfigurationProperties {
 
     @Data
     public static class ConfigFilePrefix {
-        @JsonProperty("default")
-        private String _default = "clouddriver";
+        @JsonIgnore
+        private String itsDefault = "clouddriver";
         private String kubernetes = "kube";
         private String cloudfoundry = "cf";
         private String aws = "aws";
         private String ecs = "ecs";
 
+        @JsonProperty("default")
         public String getDefault() {
-            return _default;
+            return itsDefault;
         }
 
-        public void setDefault(String _default) {
-            this._default = _default;
+        @JsonProperty("default")
+        public void setDefault(String aDefault) {
+            this.itsDefault = aDefault;
         }
     }
 
@@ -132,7 +135,7 @@ public class EAPConfigurationProperties {
                 return;
             }
             if (localCloneDir == null || localCloneDir.isEmpty()) {
-                localCloneDir = System.getProperty("java.io.tmpdir") + UUID.randomUUID().toString();
+                localCloneDir = System.getProperty("java.io.tmpdir") + File.separator + UUID.randomUUID().toString();
                 log.info("localCloneDir not defined, using {}", localCloneDir);
             }
             if (getLocalClonePath().toFile().exists()) {

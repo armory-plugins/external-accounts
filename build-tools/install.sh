@@ -1,4 +1,13 @@
 #!/bin/sh
 
+set -ex
+
 echo "Installing plugin $PLUGIN_FILE"
-cp /opt/plugin/$PLUGIN_FILE /opt/plugin/target/
+
+VERSION=$(echo "$PLUGIN_ID" | sed 's/eap-//')
+
+cd /opt/eap
+
+mkdir -p /opt/eap/target/eap/$VERSION
+cp /opt/eap/plugins-docker.json /opt/eap/target/eap/plugins.json
+cp /opt/eap/$PLUGIN_FILE /opt/eap/target/eap/$VERSION/$PLUGIN_FILE
