@@ -68,7 +68,11 @@ public class GitContainer extends GenericContainer<GitContainer> {
     private void initRepo() {
         ExecResult execResult = null;
         try {
-            String cmd = "git -C " + REPO_PATH + " init";
+            String cmd = "chmod 400 /root/.ssh/id_test_rsa";
+            execResult = execInContainer("sh", "-c", cmd);
+            System.out.println(cmd + ": " + execResult);
+            assertThat(execResult.getExitCode()).isEqualTo(0);
+            cmd = "git -C " + REPO_PATH + " init";
             execResult = execInContainer("sh", "-c", cmd);
             System.out.println(cmd + ": " + execResult);
             assertThat(execResult.getExitCode()).isEqualTo(0);
