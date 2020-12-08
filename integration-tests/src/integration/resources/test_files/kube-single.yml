@@ -8,7 +8,8 @@ kubernetes:
       dockerRegistries: []
       configureImagePullSecrets: true
       cacheThreads: 1
-      namespaces: []
+      namespaces:
+        - default
       omitNamespaces: []
       kinds: []
       omitKinds: []

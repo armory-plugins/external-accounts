@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.armory.plugin.eap.it;
+package io.armory.plugin.eap.it.git;
 
 import io.armory.plugin.eap.it.utils.TestUtils;
 import io.restassured.path.json.JsonPath;
@@ -29,7 +29,7 @@ import java.util.concurrent.TimeUnit;
 
 import static io.restassured.RestAssured.given;
 
-public class CrudTest extends BaseTest {
+public class CrudTest extends BaseGitTest {
 
     @DisplayName(".\n===\n"
             + "Given one kubernetes account defined in git\n"
@@ -40,10 +40,10 @@ public class CrudTest extends BaseTest {
     @Test
     public void shouldAddNewAccount() throws IOException, InterruptedException {
         // given
-        Map<String, Object> fileContents = TestUtils.loadYaml("test_files/acc-single-kube.yml")
+        Map<String, Object> fileContents = TestUtils.loadYaml("test_files/kube-single.yml")
                 .withValue("kubernetes.accounts[0].name", "kube-1")
                 .asMap();
-        gitContainer.addFileContentsToRepo(fileContents, "kubernetes", "acc-kube-1.yml");
+        gitContainer.addFileContentsToRepo(fileContents, "kubernetes", "kube-single-1.yml");
         TestUtils.repeatUntilTrue(() -> {
             System.out.println("> GET /credentials");
             Response response = given().get(baseUrl() + "/credentials");
@@ -54,10 +54,10 @@ public class CrudTest extends BaseTest {
         }, ACCOUNTS_REGISTERED_TIMEOUT_SEC, TimeUnit.SECONDS, "Waited " + ACCOUNTS_REGISTERED_TIMEOUT_SEC +
                 " seconds for account \"kube-1\" to show in /credentials endpoint");
 
-        fileContents = TestUtils.loadYaml("test_files/acc-single-kube.yml")
+        fileContents = TestUtils.loadYaml("test_files/kube-single.yml")
                 .withValue("kubernetes.accounts[0].name", "kube-2")
                 .asMap();
-        gitContainer.addFileContentsToRepo(fileContents, "kubernetes", "acc-kube-2.yml");
+        gitContainer.addFileContentsToRepo(fileContents, "kubernetes", "kube-single-2.yml");
 
         TestUtils.repeatUntilTrue(() -> {
             // when
@@ -82,14 +82,14 @@ public class CrudTest extends BaseTest {
     @Test
     public void shouldDeleteAccount() throws IOException, InterruptedException {
         // given
-        Map<String, Object> fileContents = TestUtils.loadYaml("test_files/acc-single-kube.yml")
+        Map<String, Object> fileContents = TestUtils.loadYaml("test_files/kube-single.yml")
                 .withValue("kubernetes.accounts[0].name", "kube-1")
                 .asMap();
-        gitContainer.addFileContentsToRepo(fileContents, "kubernetes", "acc-kube-1.yml");
-        fileContents = TestUtils.loadYaml("test_files/acc-single-kube.yml")
+        gitContainer.addFileContentsToRepo(fileContents, "kubernetes", "kube-single-1.yml");
+        fileContents = TestUtils.loadYaml("test_files/kube-single.yml")
                 .withValue("kubernetes.accounts[0].name", "kube-2")
                 .asMap();
-        gitContainer.addFileContentsToRepo(fileContents, "kubernetes", "acc-kube-2.yml");
+        gitContainer.addFileContentsToRepo(fileContents, "kubernetes", "kube-single-2.yml");
 
         TestUtils.repeatUntilTrue(() -> {
             System.out.println("> GET /credentials");
@@ -101,7 +101,7 @@ public class CrudTest extends BaseTest {
         }, ACCOUNTS_REGISTERED_TIMEOUT_SEC, TimeUnit.SECONDS, "Waited " + ACCOUNTS_REGISTERED_TIMEOUT_SEC +
                 " seconds for accounts \"kube-1\" and \"kube-2\" to show in /credentials endpoint");
 
-        gitContainer.removeFileFromRepo("kubernetes/acc-kube-2.yml");
+        gitContainer.removeFileFromRepo("kubernetes/kube-single-2.yml");
 
         TestUtils.repeatUntilTrue(() -> {
             // when
@@ -126,11 +126,11 @@ public class CrudTest extends BaseTest {
     @Test
     public void shouldUpdateAccount() throws IOException, InterruptedException {
         // given
-        Map<String, Object> fileContents = TestUtils.loadYaml("test_files/acc-single-kube.yml")
+        Map<String, Object> fileContents = TestUtils.loadYaml("test_files/kube-single.yml")
                 .withValue("kubernetes.accounts[0].name", "kube-1")
                 .withValue("kubernetes.accounts[0].cacheThreads", "1")
                 .asMap();
-        gitContainer.addFileContentsToRepo(fileContents, "kubernetes", "acc-kube.yml");
+        gitContainer.addFileContentsToRepo(fileContents, "kubernetes", "kube-single.yml");
 
         TestUtils.repeatUntilTrue(() -> {
             System.out.println("> GET /credentials");
@@ -143,11 +143,11 @@ public class CrudTest extends BaseTest {
                     creds.get(0).get("cacheThreads").equals(1);
         }, ACCOUNTS_REGISTERED_TIMEOUT_SEC, TimeUnit.SECONDS, "Waited " + ACCOUNTS_REGISTERED_TIMEOUT_SEC +
                 " seconds for account \"kube-1\" to show in /credentials endpoint having cacheThreads: 1");
-        fileContents = TestUtils.loadYaml("test_files/acc-single-kube.yml")
+        fileContents = TestUtils.loadYaml("test_files/kube-single.yml")
                 .withValue("kubernetes.accounts[0].name", "kube-1")
                 .withValue("kubernetes.accounts[0].cacheThreads", "2")
                 .asMap();
-        gitContainer.addFileContentsToRepo(fileContents, "kubernetes", "acc-kube.yml");
+        gitContainer.addFileContentsToRepo(fileContents, "kubernetes", "kube-single.yml");
 
         TestUtils.repeatUntilTrue(() -> {
             // when
@@ -174,10 +174,10 @@ public class CrudTest extends BaseTest {
     @Test
     public void shouldReplaceEnvVar() throws IOException, InterruptedException {
         // given
-        Map<String, Object> fileContents = TestUtils.loadYaml("test_files/acc-single-kube.yml")
+        Map<String, Object> fileContents = TestUtils.loadYaml("test_files/kube-single.yml")
                 .withValue("kubernetes.accounts[0].name", "${HOME}")
                 .asMap();
-        gitContainer.addFileContentsToRepo(fileContents, "kubernetes", "acc-kube-1.yml");
+        gitContainer.addFileContentsToRepo(fileContents, "kubernetes", "kube-single-1.yml");
 
         TestUtils.repeatUntilTrue(() -> {
             // when

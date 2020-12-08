@@ -14,6 +14,7 @@ import com.netflix.spinnaker.credentials.definition.CredentialsDefinition;
 import com.netflix.spinnaker.credentials.definition.CredentialsDefinitionSource;
 import com.netflix.spinnaker.kork.secrets.SecretManager;
 import io.armory.plugin.eap.EAPException;
+import io.armory.plugin.eap.config.EAPConfigurationProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.yaml.snakeyaml.Yaml;
@@ -32,10 +33,6 @@ import java.util.regex.Pattern;
 @Slf4j
 public class URLCredentialsLoader<T extends CredentialsDefinition> implements CredentialsDefinitionSource<T> {
 
-    public enum Format {
-        YAML, JSON
-    }
-
     private static final Map<Class<? extends CredentialsDefinition>, String> PROVIDER_NAME_BY_CLASS = ImmutableMap.of(
             KubernetesConfigurationProperties.ManagedAccount.class, "kubernetes",
             CloudFoundryConfigurationProperties.ManagedAccount.class, "cloudfoundry",
@@ -46,13 +43,14 @@ public class URLCredentialsLoader<T extends CredentialsDefinition> implements Cr
     private static final Pattern ENV_VAR_PATTERN = Pattern.compile("^.*\\$\\{(.*)}.*$");
 
     private final URL url;
-    private final Format format;
+    private final EAPConfigurationProperties.FileFormat format;
     private final Class<T> classType;
     private final String providerName;
     private final JavaType listJavaType;
     private ObjectMapper mapper;
 
-    public URLCredentialsLoader(URL url, Format format, Class<T> classType, SecretManager secretManager) {
+    public URLCredentialsLoader(URL url, EAPConfigurationProperties.FileFormat format,
+                                Class<T> classType, SecretManager secretManager) {
         this.url = url;
         this.format = format;
         this.classType = classType;
@@ -103,9 +101,9 @@ public class URLCredentialsLoader<T extends CredentialsDefinition> implements Cr
                 case JSON:
                     JsonNode jsonNode = mapper.readTree(reader);
                     if (jsonNode.isArray()) {
-                        return (List<T>) Optional.ofNullable(mapper.readValue(reader, listJavaType)).orElse(new ArrayList<>());
+                        return (List<T>) Optional.ofNullable(mapper.convertValue(jsonNode, listJavaType)).orElse(new ArrayList<>());
                     }
-                    configMap = mapper.readValue(reader, javaType);
+                    configMap = mapper.convertValue(jsonNode, javaType);
                     return convertMap(configMap);
                 case YAML:
                     Yaml yaml = new Yaml(new SafeConstructor());

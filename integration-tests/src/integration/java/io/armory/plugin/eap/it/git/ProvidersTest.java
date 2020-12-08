@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.armory.plugin.eap.it;
+package io.armory.plugin.eap.it.git;
 
 import io.armory.plugin.eap.it.utils.TestUtils;
 import io.restassured.path.json.JsonPath;
@@ -29,7 +29,7 @@ import java.util.concurrent.TimeUnit;
 
 import static io.restassured.RestAssured.given;
 
-public class ProvidersTest extends BaseTest {
+public class ProvidersTest extends BaseGitTest {
 
     @DisplayName(".\n===\n"
             + "Given two kubernetes accounts in one file defined in git\n"
@@ -39,11 +39,11 @@ public class ProvidersTest extends BaseTest {
     @Test
     public void shouldLoadKubeAccountsFromSingleFile() throws IOException, InterruptedException {
         // given
-        Map<String, Object> fileContents = TestUtils.loadYaml("test_files/acc-multiple-kube.yml")
+        Map<String, Object> fileContents = TestUtils.loadYaml("test_files/kube-multiple.yml")
                 .withValue("kubernetes.accounts[0].name", "kube-1")
                 .withValue("kubernetes.accounts[1].name", "kube-2")
                 .asMap();
-        gitContainer.addFileContentsToRepo(fileContents, "kubernetes", "acc-kube.yml");
+        gitContainer.addFileContentsToRepo(fileContents, "kubernetes", "kube-multiple.yml");
 
         TestUtils.repeatUntilTrue(() -> {
             // when
@@ -67,15 +67,15 @@ public class ProvidersTest extends BaseTest {
     @Test
     public void shouldLoadKubeAccountsFromMultipleFiles() throws IOException, InterruptedException {
         // given
-        Map<String, Object> fileContents = TestUtils.loadYaml("test_files/acc-single-kube.yml")
+        Map<String, Object> fileContents = TestUtils.loadYaml("test_files/kube-single.yml")
                 .withValue("kubernetes.accounts[0].name", "kube-1")
                 .asMap();
-        gitContainer.addFileContentsToRepo(fileContents, "kubernetes", "acc-kube-1.yml");
+        gitContainer.addFileContentsToRepo(fileContents, "kubernetes", "kube-single-1.yml");
 
-        fileContents = TestUtils.loadYaml("test_files/acc-single-kube.yml")
+        fileContents = TestUtils.loadYaml("test_files/kube-single.yml")
                 .withValue("kubernetes.accounts[0].name", "kube-2")
                 .asMap();
-        gitContainer.addFileContentsToRepo(fileContents, "kubernetes", "acc-kube-2.yml");
+        gitContainer.addFileContentsToRepo(fileContents, "kubernetes", "kube-single-2.yml");
 
         TestUtils.repeatUntilTrue(() -> {
             // when
@@ -99,11 +99,11 @@ public class ProvidersTest extends BaseTest {
     @Test
     public void shouldLoadCfAccountsFromSingleFile() throws IOException, InterruptedException {
         // given
-        Map<String, Object> fileContents = TestUtils.loadYaml("test_files/acc-multiple-cf.yml")
+        Map<String, Object> fileContents = TestUtils.loadYaml("test_files/cf-multiple.yml")
                 .withValue("cloudfoundry.accounts[0].name", "cf-1")
                 .withValue("cloudfoundry.accounts[1].name", "cf-2")
                 .asMap();
-        gitContainer.addFileContentsToRepo(fileContents, "cloudfoundry", "acc-cf.yml");
+        gitContainer.addFileContentsToRepo(fileContents, "cloudfoundry", "cf-multiple.yml");
 
         TestUtils.repeatUntilTrue(() -> {
             // when
@@ -127,11 +127,11 @@ public class ProvidersTest extends BaseTest {
     @Test
     public void shouldLoadMixedAccountsFromSingleFile() throws IOException, InterruptedException {
         // given
-        Map<String, Object> fileContents = TestUtils.loadYaml("test_files/acc-mixed.yml")
+        Map<String, Object> fileContents = TestUtils.loadYaml("test_files/clouddriver-mixed.yml")
                 .withValue("kubernetes.accounts[0].name", "kube-1")
                 .withValue("cloudfoundry.accounts[0].name", "cf-1")
                 .asMap();
-        gitContainer.addFileContentsToRepo(fileContents, null, "acc-all.yml");
+        gitContainer.addFileContentsToRepo(fileContents, null, "clouddriver-mixed.yml");
 
         TestUtils.repeatUntilTrue(() -> {
             // when

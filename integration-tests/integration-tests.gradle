@@ -44,6 +44,7 @@ dependencies {
   }
   integrationImplementation "org.yaml:snakeyaml:1.26"
   integrationImplementation "org.projectlombok:lombok:1.18.12"
+  integrationImplementation "commons-io:commons-io:2.6"
 }
 
 task integrationTest(type: Test) {

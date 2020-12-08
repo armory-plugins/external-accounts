@@ -1,4 +1,4 @@
-package io.armory.plugin.eap.syncs;
+package io.armory.plugin.eap.sync;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.jcraft.jsch.JSch;
@@ -34,12 +34,12 @@ public class GitSync implements Runnable {
 
     public GitSync(EAPConfigurationProperties configProperties) {
         this.configProperties = configProperties;
-        if (!StringUtils.isEmpty(this.configProperties.getUsername()) &&
-                !StringUtils.isEmpty(this.configProperties.getPassword())) {
+        if (!StringUtils.isEmpty(this.configProperties.getGit().getUsername()) &&
+                !StringUtils.isEmpty(this.configProperties.getGit().getPassword())) {
             authType = AuthType.HTTP;
-        } else if (!StringUtils.isEmpty(this.configProperties.getToken())) {
+        } else if (!StringUtils.isEmpty(this.configProperties.getGit().getToken())) {
             authType = AuthType.TOKEN;
-        } else if (!StringUtils.isEmpty(this.configProperties.getSshPrivateKeyFilePath())) {
+        } else if (!StringUtils.isEmpty(this.configProperties.getGit().getSshPrivateKeyFilePath())) {
             authType = AuthType.SSH;
         } else {
             authType = AuthType.NONE;
@@ -49,47 +49,47 @@ public class GitSync implements Runnable {
                         .setNameFormat(GitSync.class.getSimpleName() + "-%d")
                         .build());
         executor.scheduleAtFixedRate(this, 0,
-                configProperties.getRefreshIntervalSeconds(), TimeUnit.SECONDS);
+                configProperties.getGit().getSyncIntervalSecs(), TimeUnit.SECONDS);
     }
 
     @Override
     public void run() {
         try {
-            File[] targetFiles = configProperties.getClonePath().toFile().listFiles();
+            File[] targetFiles = configProperties.getGit().getLocalClonePath().toFile().listFiles();
             if (targetFiles == null || targetFiles.length == 0) {
                 cloneRepo();
             } else {
                 pullChanges();
             }
         } catch (Throwable t) {
-            log.error("Exception cloning or refreshing git repo " + configProperties.getRepo(), t);
+            log.error("Exception cloning or refreshing git repo " + configProperties.getGit().getRepo(), t);
         }
     }
 
     private void cloneRepo() {
         log.info("Cloning git repository {} into {}",
-                this.configProperties.getRepo(),
-                this.configProperties.getClonePath().toAbsolutePath());
+                this.configProperties.getGit().getRepo(),
+                this.configProperties.getGit().getLocalClonePath().toAbsolutePath());
 
         try (@SuppressWarnings("unused") Git localRepository = addAuthentication(Git.cloneRepository())
-                .setURI(configProperties.getRepo())
-                .setDirectory(configProperties.getClonePath().toFile())
-                .setBranch(configProperties.getBranch())
+                .setURI(configProperties.getGit().getRepo())
+                .setDirectory(configProperties.getGit().getLocalClonePath().toFile())
+                .setBranch(configProperties.getGit().getBranch())
                 .call()) {
-            log.info("Git repository cloned");
+            log.info("GitConfig repository cloned");
         } catch (GitAPIException e) {
             throw new EAPException(
-                    "Failed to clone git repository " + configProperties.getRepo() + ": " + e.getMessage(), e);
+                    "Failed to clone git repository " + configProperties.getGit().getRepo() + ": " + e.getMessage(), e);
         }
     }
 
     private void pullChanges() {
-        log.debug("Pulling latest changes from repo {}", configProperties.getRepo());
-        try (Git localRepository = Git.open(configProperties.getClonePath().toFile())) {
+        log.debug("Pulling latest changes from repo {}", configProperties.getGit().getRepo());
+        try (Git localRepository = Git.open(configProperties.getGit().getLocalClonePath().toFile())) {
             addAuthentication(localRepository.pull()).call();
         } catch (IOException | GitAPIException e) {
             throw new EAPException(
-                    "Failed to do \"git pull\" of repository " + configProperties.getRepo() + ": " + e.getMessage(), e);
+                    "Failed to do \"git pull\" of repository " + configProperties.getGit().getRepo() + ": " + e.getMessage(), e);
         }
     }
 
@@ -98,11 +98,11 @@ public class GitSync implements Runnable {
         switch (authType) {
             case HTTP:
                 return command.setCredentialsProvider(
-                        new UsernamePasswordCredentialsProvider(this.configProperties.getUsername(),
-                                this.configProperties.getPassword()));
+                        new UsernamePasswordCredentialsProvider(this.configProperties.getGit().getUsername(),
+                                this.configProperties.getGit().getPassword()));
             case TOKEN:
                 return command.setCredentialsProvider(
-                        new UsernamePasswordCredentialsProvider(this.configProperties.getToken(), ""));
+                        new UsernamePasswordCredentialsProvider(this.configProperties.getGit().getToken(), ""));
             case SSH:
                 return configureSshAuth(command);
             default:
@@ -121,8 +121,8 @@ public class GitSync implements Runnable {
                     sshTransport.setSshSessionFactory(new JschConfigSessionFactory() {
                         @Override
                         protected void configure(OpenSshConfig.Host hc, Session session) {
-                            if (StringUtils.isEmpty(configProperties.getSshKnownHostsFilePath()) &&
-                                    configProperties.isSshTrustUnknownHosts()) {
+                            if (StringUtils.isEmpty(configProperties.getGit().getSshKnownHostsFilePath()) &&
+                                    configProperties.getGit().isSshTrustUnknownHosts()) {
                                 session.setConfig("StrictHostKeyChecking", "no");
                             }
                         }
@@ -130,19 +130,20 @@ public class GitSync implements Runnable {
                         @Override
                         protected JSch createDefaultJSch(FS fs) throws JSchException {
                             JSch defaultJSch = super.createDefaultJSch(fs);
-                            if (!StringUtils.isEmpty(configProperties.getSshPrivateKeyPassphrase())) {
-                                defaultJSch.addIdentity(configProperties.getSshPrivateKeyFilePath(),
-                                        configProperties.getSshPrivateKeyPassphrase());
+                            if (!StringUtils.isEmpty(configProperties.getGit().getSshPrivateKeyPassphrase())) {
+                                defaultJSch.addIdentity(configProperties.getGit().getSshPrivateKeyFilePath(),
+                                        configProperties.getGit().getSshPrivateKeyPassphrase());
                             } else {
-                                defaultJSch.addIdentity(configProperties.getSshPrivateKeyFilePath());
+                                defaultJSch.addIdentity(configProperties.getGit().getSshPrivateKeyFilePath());
                             }
 
-                            if (!StringUtils.isEmpty(configProperties.getSshKnownHostsFilePath()) && configProperties.isSshTrustUnknownHosts()) {
+                            if (!StringUtils.isEmpty(configProperties.getGit().getSshKnownHostsFilePath()) &&
+                                    configProperties.getGit().isSshTrustUnknownHosts()) {
                                 log.warn("SSH known_hosts file path supplied, ignoring 'sshTrustUnknownHosts' option");
                             }
 
-                            if (!StringUtils.isEmpty(configProperties.getSshKnownHostsFilePath())) {
-                                defaultJSch.setKnownHosts(configProperties.getSshKnownHostsFilePath());
+                            if (!StringUtils.isEmpty(configProperties.getGit().getSshKnownHostsFilePath())) {
+                                defaultJSch.setKnownHosts(configProperties.getGit().getSshKnownHostsFilePath());
                             }
 
                             return defaultJSch;

@@ -1,3 +1,6 @@
+import groovy.json.JsonSlurper
+import groovy.json.JsonOutput
+
 buildscript {
     repositories {
         jcenter()
@@ -46,9 +49,9 @@ docker {
     dockerfile project.file("build-tools/Dockerfile")
     def registry = System.getenv('REGISTRY') ?: "docker.io"
     def registryOrg = System.getenv('REGISTRY_ORG') ?: "armory"
-    name "$registry/$registryOrg/kubesvc-plugin:$version"
+    name "$registry/$registryOrg/eap-plugin:$version"
     files project.file("build/distributions"), project.file("build-tools/install.sh")
-    buildArgs([PLUGIN_ID: "kubesvc-$version"])
+    buildArgs([PLUGIN_ID: "eap-$version"])
     copySpec.from("build/distributions").into("distributions")
 }
 
@@ -61,3 +64,25 @@ String normalizedVersion() {
         ext.version = os.toString().trim()
     }
 }
+
+task generatePluginsJson {
+    doLast {
+        def pluginInfoFile = new File("$buildDir/distributions/plugin-info.json")
+        def pluginInfo = new JsonSlurper().parse(pluginInfoFile)
+
+        pluginInfo.releases[0].url = "file:///opt/spinnaker/lib/local-plugins/eap/${version}/eap-${version}.zip"
+        def plugins = [ pluginInfo ]
+        File dockerPlugins = new File("$buildDir/distributions/plugins-docker.json")
+        dockerPlugins.write(JsonOutput.prettyPrint(JsonOutput.toJson(plugins)))
+
+        pluginInfo.releases[0].url = "https://armory.jfrog.io/artifactory/plugins/eap/${version}/eap-${version}.zip"
+        File remotePlugins = new File("$buildDir/distributions/plugins-remote.json")
+        remotePlugins.write(JsonOutput.prettyPrint(JsonOutput.toJson(plugins)))
+
+        pluginInfo.releases[0].url = "file://$buildDir/distributions/eap-${version}.zip"
+        File localPlugins = new File("$buildDir/distributions/plugins.json")
+        localPlugins.write(JsonOutput.prettyPrint(JsonOutput.toJson(plugins)))
+    }
+}
+
+releaseBundle.finalizedBy generatePluginsJson

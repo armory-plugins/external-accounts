@@ -90,6 +90,11 @@ public abstract class TestUtils {
             return content;
         }
 
+        public String asString() {
+            Yaml yaml = new  Yaml();
+            return yaml.dump(content);
+        }
+
         @SuppressWarnings("unchecked")
         public TestResourceFile withValue(String path, Object value) {
             List<String> parts = Splitter.on('.').splitToList(path);

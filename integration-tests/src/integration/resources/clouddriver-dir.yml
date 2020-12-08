@@ -1,15 +1,8 @@
 armory:
-  dag:
-    repo: git # Dynamically set at runtime
-    branch: master
-    refreshIntervalSeconds: 5
-    configDir: ""
-    configFilePrefix: acc
-#    token: 1ccab7af860f6eea4483146c6650c330329444e7
-    sshPrivateKeyFilePath: ${SSH_KEYS}/id_test_rsa
-    sshPrivateKeyPassphrase: PiqPb2m_FodJmV.L
-    sshKnownHostsFilePath: ${SSH_KEYS}/known_hosts
-    sshTrustUnknownHosts: false
+  eap:
+    dir:
+      enabled: true
+      path: ${BUILD_DIR}/tmp/dirtests
 
 credentials:
   poller:
