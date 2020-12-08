@@ -72,11 +72,11 @@ public class GitContainer extends GenericContainer<GitContainer> {
             execResult = execInContainer("sh", "-c", cmd);
             System.out.println(cmd + ": " + execResult);
             assertThat(execResult.getExitCode()).isEqualTo(0);
-            cmd = "git -C " + REPO_PATH + " init";
+            cmd = "cd " + REPO_PATH + " && git init";
             execResult = execInContainer("sh", "-c", cmd);
             System.out.println(cmd + ": " + execResult);
             assertThat(execResult.getExitCode()).isEqualTo(0);
-            cmd = "git -C " + REPO_PATH + " remote add origin git@localhost:test/test_repo.git";
+            cmd = "cd " + REPO_PATH + " && git remote add origin git@localhost:test/test_repo.git";
             execResult = execInContainer("sh", "-c", cmd);
             System.out.println(cmd + ": " + execResult);
             assertThat(execResult.getExitCode()).isEqualTo(0);
@@ -99,20 +99,20 @@ public class GitContainer extends GenericContainer<GitContainer> {
     private void pushChanges() {
         ExecResult execResult = null;
         try {
-            String cmd = "git -C " + REPO_PATH + " add .";
+            String cmd = "cd " + REPO_PATH + " && git add .";
             execResult = execInContainer("sh", "-c", cmd);
             System.out.println(cmd + ": " + execResult);
             assertThat(execResult.getExitCode()).isEqualTo(0);
-            cmd = "git -C " + REPO_PATH + " status --porcelain";
+            cmd = "cd " + REPO_PATH + " && git status --porcelain";
             execResult = execInContainer("sh", "-c", cmd);
             System.out.println(cmd + ": " + execResult);
             assertThat(execResult.getExitCode()).isEqualTo(0);
             if (!execResult.getStdout().isEmpty()) {
-                cmd = "git -C " + REPO_PATH + " commit -m \"test\"";
+                cmd = "cd " + REPO_PATH + " && git commit -m \"test\"";
                 execResult = execInContainer("sh", "-c", cmd);
                 System.out.println(cmd + ": " + execResult);
                 assertThat(execResult.getExitCode()).isEqualTo(0);
-                cmd = "ssh-agent bash -c 'echo \"PiqPb2m_FodJmV.L\" | ssh-add /root/.ssh/id_test_rsa ; git -C " + REPO_PATH + " push --set-upstream origin master'";
+                cmd = "ssh-agent bash -c 'echo \"PiqPb2m_FodJmV.L\" | ssh-add /root/.ssh/id_test_rsa ; cd " + REPO_PATH + " && git push --set-upstream origin master'";
                 execResult = execInContainer("sh", "-c", cmd);
                 System.out.println(cmd + ": " + execResult);
                 assertThat(execResult.getExitCode()).isEqualTo(0);
