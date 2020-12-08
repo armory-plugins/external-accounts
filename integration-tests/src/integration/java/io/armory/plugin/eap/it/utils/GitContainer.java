@@ -126,13 +126,16 @@ public class GitContainer extends GenericContainer<GitContainer> {
 
     public void addFileContentsToRepo(Map<String, Object> fileContents, String dirInRepo, String fileName) throws IOException {
         Path filePath = Paths.get(System.getenv("BUILD_DIR"), "tmp", fileName);
+        FileWriter fileWriter = new FileWriter(filePath.toFile());
         if (fileName.endsWith("json")) {
             ObjectMapper mapper = new ObjectMapper();
-            mapper.writeValue(new FileWriter(filePath.toFile()), fileContents);
+            mapper.writeValue(fileWriter, fileContents);
         } else {
             Yaml yaml = new Yaml(new SafeConstructor());
-            yaml.dump(fileContents, new FileWriter(filePath.toFile()));
+            yaml.dump(fileContents, fileWriter);
         }
+        fileWriter.flush();
+        fileWriter.close();
         addHostFileToRepo(filePath.toString(), dirInRepo, fileName);
     }
 
