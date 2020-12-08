@@ -104,5 +104,5 @@ jobs:
       - name: Publish plugin to artifactory
         if: steps.build_type.outputs.version_type == 'rc' || steps.build_type.outputs.version_type == 'release'
         run: |
-          curl -H "Authorization: Bearer ${{ secrets.ARTIFACTORY_TOKEN }}" -X PUT "https://armory.jfrog.io/artifactory/plugins/appname/${{ steps.build_type.outputs.version }}/appNamePlugin-${{ steps.build_type.outputs.version }}.zip" -T build/distributions/appNamePlugin-${{ steps.build_type.outputs.version }}.zip
-          curl -H "Authorization: Bearer ${{ secrets.ARTIFACTORY_TOKEN }}" -X PUT "https://armory.jfrog.io/artifactory/plugins/appname/plugins.json" -T build/distributions/plugins-remote.json
+          curl -H "Authorization: Bearer ${{ secrets.ARTIFACTORY_TOKEN }}" -X PUT "https://armory.jfrog.io/artifactory/plugins/eap/${{ steps.build_type.outputs.version }}/eap-${{ steps.build_type.outputs.version }}.zip" -T build/distributions/eap-${{ steps.build_type.outputs.version }}.zip
+          curl -H "Authorization: Bearer ${{ secrets.ARTIFACTORY_TOKEN }}" -X PUT "https://armory.jfrog.io/artifactory/plugins/eap/plugins.json" -T build/distributions/plugins-remote.json
