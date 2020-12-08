@@ -31,9 +31,9 @@ import static org.junit.jupiter.api.Assertions.fail;
         classes = {Main.class},
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestPropertySource(properties = {"spring.config.location = classpath:clouddriver-git.yml"})
-public abstract class BaseTest {
+public abstract class BaseGitTest {
 
-    public static final int ACCOUNTS_REGISTERED_TIMEOUT_SEC = 40;
+    public static final int ACCOUNTS_REGISTERED_TIMEOUT_SEC = 20;
     public static GitContainer gitContainer = new GitContainer("ssh");
 
     static {

@@ -22,9 +22,9 @@ import java.util.UUID;
 @Slf4j
 public class EAPConfigurationProperties {
 
-    private File file = new File();
-    private Dir dir = new Dir();
-    private Git git = new Git();
+    private UrlConfig url = new UrlConfig();
+    private DirConfig dir = new DirConfig();
+    private GitConfig git = new GitConfig();
 
     public enum FileFormat {
         YAML("yaml", "yml"), JSON("json");
@@ -53,8 +53,8 @@ public class EAPConfigurationProperties {
     }
 
     @Data
-    public static class File {
-        private boolean enabled;
+    public static class UrlConfig {
+        private boolean enabled = false;
         private String url;
         private String format;
         @JsonIgnore
@@ -89,8 +89,8 @@ public class EAPConfigurationProperties {
     }
 
     @Data
-    public static class Dir {
-        private boolean enabled;
+    public static class DirConfig {
+        private boolean enabled = false;
         private String path;
         private ConfigFilePrefix configFilePrefix = new ConfigFilePrefix();
 
@@ -102,13 +102,17 @@ public class EAPConfigurationProperties {
                 throw new EAPException("\"path\" should not be empty");
             }
         }
+
+        public Path getPath() {
+            return Paths.get(path);
+        }
     }
 
     @Data
-    public static class Git {
-        private boolean enabled;
+    public static class GitConfig {
+        private boolean enabled = false;
         private int syncIntervalSecs = 60;
-        private String repo;                             // Git repository to clone
+        private String repo;                             // GitConfig repository to clone
         private String branch = "master";                // Can be specified as ref name (refs/heads/master), branch name (master) or tag name (v1.2.3)
         private String localCloneDir;                         // Target directory where git repo will be downloaded
         private String repoSubdir = "";
@@ -147,7 +151,7 @@ public class EAPConfigurationProperties {
 
     @PostConstruct
     public void init() throws IOException {
-        file.validate();
+        url.validate();
         dir.validate();
         git.init();
     }

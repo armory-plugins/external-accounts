@@ -3,6 +3,7 @@ package io.armory.plugin.eap.loaders;
 import com.netflix.spinnaker.credentials.definition.CredentialsDefinition;
 import com.netflix.spinnaker.credentials.definition.CredentialsDefinitionSource;
 import com.netflix.spinnaker.kork.secrets.SecretManager;
+import io.armory.plugin.eap.config.EAPConfigurationProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.jetbrains.annotations.NotNull;
@@ -50,11 +51,11 @@ public class DirectoryCredentialsLoader<T extends CredentialsDefinition> impleme
 
     private void addCredentials(File file, List<T> credentials) {
         try {
-            URLCredentialsLoader.Format format;
+            EAPConfigurationProperties.FileFormat format;
             if (file.getName().endsWith("json")) {
-                format = URLCredentialsLoader.Format.JSON;
+                format = EAPConfigurationProperties.FileFormat.JSON;
             } else {
-                format = URLCredentialsLoader.Format.YAML;
+                format = EAPConfigurationProperties.FileFormat.YAML;
             }
             URLCredentialsLoader<T> loader = new URLCredentialsLoader<>(
                     file.toURI().toURL(), format, classType, secretManager);

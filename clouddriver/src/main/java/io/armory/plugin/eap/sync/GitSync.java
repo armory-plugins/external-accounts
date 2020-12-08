@@ -76,7 +76,7 @@ public class GitSync implements Runnable {
                 .setDirectory(configProperties.getGit().getLocalClonePath().toFile())
                 .setBranch(configProperties.getGit().getBranch())
                 .call()) {
-            log.info("Git repository cloned");
+            log.info("GitConfig repository cloned");
         } catch (GitAPIException e) {
             throw new EAPException(
                     "Failed to clone git repository " + configProperties.getGit().getRepo() + ": " + e.getMessage(), e);

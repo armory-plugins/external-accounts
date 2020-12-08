@@ -29,7 +29,7 @@ import java.util.concurrent.TimeUnit;
 
 import static io.restassured.RestAssured.given;
 
-public class CrudTest extends BaseTest {
+public class CrudTest extends BaseGitTest {
 
     @DisplayName(".\n===\n"
             + "Given one kubernetes account defined in git\n"

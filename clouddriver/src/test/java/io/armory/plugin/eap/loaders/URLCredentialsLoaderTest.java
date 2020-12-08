@@ -2,6 +2,7 @@ package io.armory.plugin.eap.loaders;
 
 import com.netflix.spinnaker.clouddriver.kubernetes.config.KubernetesConfigurationProperties;
 import com.netflix.spinnaker.kork.secrets.SecretManager;
+import io.armory.plugin.eap.config.EAPConfigurationProperties;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.stubbing.Answer;
@@ -29,7 +30,7 @@ class URLCredentialsLoaderTest {
     public void testLoadYamlProviderFile() {
         URLCredentialsLoader<KubernetesConfigurationProperties.ManagedAccount> loader = new URLCredentialsLoader<>(
                 null,
-                URLCredentialsLoader.Format.YAML,
+                EAPConfigurationProperties.FileFormat.YAML,
                 KubernetesConfigurationProperties.ManagedAccount.class,
                 secretManager) {
             @Override
@@ -46,7 +47,7 @@ class URLCredentialsLoaderTest {
     public void testLoadJsonProviderFile() {
         URLCredentialsLoader<KubernetesConfigurationProperties.ManagedAccount> loader = new URLCredentialsLoader<>(
                 null,
-                URLCredentialsLoader.Format.YAML,
+                EAPConfigurationProperties.FileFormat.JSON,
                 KubernetesConfigurationProperties.ManagedAccount.class,
                 secretManager) {
             @Override
@@ -63,7 +64,7 @@ class URLCredentialsLoaderTest {
     public void testLoadYamlListFile() {
         URLCredentialsLoader<KubernetesConfigurationProperties.ManagedAccount> loader = new URLCredentialsLoader<>(
                 null,
-                URLCredentialsLoader.Format.YAML,
+                EAPConfigurationProperties.FileFormat.YAML,
                 KubernetesConfigurationProperties.ManagedAccount.class,
                 secretManager) {
             @Override
@@ -80,7 +81,7 @@ class URLCredentialsLoaderTest {
     public void testLoadJsonListFile() {
         URLCredentialsLoader<KubernetesConfigurationProperties.ManagedAccount> loader = new URLCredentialsLoader<>(
                 null,
-                URLCredentialsLoader.Format.YAML,
+                EAPConfigurationProperties.FileFormat.JSON,
                 KubernetesConfigurationProperties.ManagedAccount.class,
                 secretManager) {
             @Override
@@ -97,7 +98,7 @@ class URLCredentialsLoaderTest {
     public void testLoadYamSingleFile() {
         URLCredentialsLoader<KubernetesConfigurationProperties.ManagedAccount> loader = new URLCredentialsLoader<>(
                 null,
-                URLCredentialsLoader.Format.YAML,
+                EAPConfigurationProperties.FileFormat.YAML,
                 KubernetesConfigurationProperties.ManagedAccount.class,
                 secretManager) {
             @Override
@@ -114,7 +115,7 @@ class URLCredentialsLoaderTest {
     public void testLoadJsonSingleFile() {
         URLCredentialsLoader<KubernetesConfigurationProperties.ManagedAccount> loader = new URLCredentialsLoader<>(
                 null,
-                URLCredentialsLoader.Format.YAML,
+                EAPConfigurationProperties.FileFormat.JSON,
                 KubernetesConfigurationProperties.ManagedAccount.class,
                 secretManager) {
             @Override
@@ -131,7 +132,7 @@ class URLCredentialsLoaderTest {
     public void testReplaceEnvVars() {
         URLCredentialsLoader<KubernetesConfigurationProperties.ManagedAccount> loader = new URLCredentialsLoader<>(
                 null,
-                URLCredentialsLoader.Format.YAML,
+                EAPConfigurationProperties.FileFormat.YAML,
                 KubernetesConfigurationProperties.ManagedAccount.class,
                 secretManager) {
             @Override
