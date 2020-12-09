@@ -17,6 +17,7 @@
 package io.armory.plugin.eap.it.utils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.io.FileUtils;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.utility.MountableFile;
 import org.yaml.snakeyaml.Yaml;
@@ -61,7 +62,7 @@ public class GitContainer extends GenericContainer<GitContainer> {
                 repoUrl = "http://" + this.getContainerIpAddress() + ":" + this.getMappedPort(3000) + "/test/test_repo.git";
                 break;
         }
-        System.setProperty("armory.eap.git.repo", repoUrl);
+        System.setProperty("armory.eap.jGitPoller.repo", repoUrl);
         initRepo();
     }
 
@@ -125,7 +126,8 @@ public class GitContainer extends GenericContainer<GitContainer> {
     }
 
     public void addFileContentsToRepo(Map<String, Object> fileContents, String dirInRepo, String fileName) throws IOException {
-        Path filePath = Paths.get(System.getenv("BUILD_DIR"), "tmp", fileName);
+        Path filePath = Paths.get(System.getenv("BUILD_DIR"), "tmp", dirInRepo, fileName);
+        FileUtils.forceMkdir(filePath.toFile().getParentFile());
         FileWriter fileWriter = new FileWriter(filePath.toFile());
         if (fileName.endsWith("json")) {
             ObjectMapper mapper = new ObjectMapper();

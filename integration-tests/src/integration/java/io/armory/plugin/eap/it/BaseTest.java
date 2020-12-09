@@ -14,30 +14,28 @@
  * limitations under the License.
  */
 
-package io.armory.plugin.eap.it.git;
+package io.armory.plugin.eap.it;
 
 import com.netflix.spinnaker.clouddriver.Main;
-import io.armory.plugin.eap.it.utils.GitContainer;
+import io.armory.plugin.eap.it.utils.TestUtils;
 import io.restassured.RestAssured;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.test.context.TestPropertySource;
 
-import static io.restassured.RestAssured.given;
-import static org.junit.jupiter.api.Assertions.fail;
+import java.io.IOException;
 
 @SpringBootTest(
         classes = {Main.class},
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@TestPropertySource(properties = {"spring.config.location = classpath:clouddriver-git.yml"})
-public abstract class BaseGitTest {
+@TestPropertySource(properties = {"spring.config.location = classpath:clouddriver.yml"})
+public abstract class BaseTest {
 
     public static final int ACCOUNTS_REGISTERED_TIMEOUT_SEC = 20;
-    public static GitContainer gitContainer = new GitContainer("ssh");
 
     static {
-        gitContainer.start();
+        System.setProperty("armory.eap.dir", TestUtils.TESTS_DIR);
         RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();
     }
 
@@ -49,7 +47,7 @@ public abstract class BaseGitTest {
     }
 
     @BeforeEach
-    public void setUp() {
-        gitContainer.emptyRepo();
+    public void setUp() throws IOException {
+        TestUtils.resetTestsDir();
     }
 }

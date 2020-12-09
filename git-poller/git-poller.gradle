@@ -1,0 +1,23 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+}
+
+apply plugin: "java-library"
+
+sourceCompatibility = 1.11
+targetCompatibility = 1.11
+
+dependencies {
+    implementation project(":common")
+
+    compileOnly(group: 'com.google.guava', name: 'guava', version: '28.2-jre')
+    compileOnly(group: 'org.eclipse.jgit', name: 'org.eclipse.jgit', version: '5.7.0.202003110725-r')
+    compileOnly(group: 'org.projectlombok', name: 'lombok', version: '1.18.12')
+    compileOnly(group: 'org.slf4j', name: 'slf4j-api', version: '1.7.30')
+    compileOnly(group: 'org.springframework', name: 'spring-core', version: '5.2.4.RELEASE')
+    annotationProcessor(group: 'org.projectlombok', name: 'lombok', version: '1.18.12')
+
+    implementation(group: 'commons-io', name: 'commons-io', version: '2.6')
+}

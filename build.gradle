@@ -50,7 +50,9 @@ docker {
     def registry = System.getenv('REGISTRY') ?: "docker.io"
     def registryOrg = System.getenv('REGISTRY_ORG') ?: "armory"
     name "$registry/$registryOrg/eap-plugin:$version"
-    files project.file("build/distributions"), project.file("build-tools/install.sh")
+    files project.file("build/distributions"),
+            project.file("build-tools/install.sh"),
+            project.file("git-poller/src/main/bash/git-poller.sh")
     buildArgs([PLUGIN_ID: "eap-$version"])
     copySpec.from("build/distributions").into("distributions")
 }

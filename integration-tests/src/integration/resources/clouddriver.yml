@@ -1,8 +1,6 @@
 armory:
   eap:
-    dir:
-      enabled: true
-      path: ${BUILD_DIR}/tmp/dirtests
+    dir: test  # Dynamically set at runtime
 
 credentials:
   poller:

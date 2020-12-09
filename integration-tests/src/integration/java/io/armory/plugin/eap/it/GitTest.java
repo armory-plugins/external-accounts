@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package io.armory.plugin.eap.it.dir;
+package io.armory.plugin.eap.it;
 
 import com.netflix.spinnaker.clouddriver.Main;
+import io.armory.plugin.eap.it.utils.GitContainer;
 import io.armory.plugin.eap.it.utils.TestUtils;
 import io.restassured.RestAssured;
 import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
-import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -29,10 +29,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.test.context.TestPropertySource;
 
+import java.io.File;
 import java.io.IOException;
-import java.nio.charset.Charset;
-import java.nio.file.Paths;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 import static io.restassured.RestAssured.given;
@@ -40,12 +41,16 @@ import static io.restassured.RestAssured.given;
 @SpringBootTest(
         classes = {Main.class},
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@TestPropertySource(properties = {"spring.config.location = classpath:clouddriver-dir.yml"})
-public class DirTest {
+@TestPropertySource(properties = {"spring.config.location = classpath:clouddriver-git.yml"})
+public class GitTest {
 
     public static final int ACCOUNTS_REGISTERED_TIMEOUT_SEC = 20;
+    public static GitContainer gitContainer = new GitContainer("ssh");
 
     static {
+        gitContainer.start();
+        String tmpDir = System.getProperty("java.io.tmpdir") + File.separator + UUID.randomUUID().toString();
+        System.setProperty("armory.eap.dir", tmpDir);
         RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();
     }
 
@@ -57,26 +62,23 @@ public class DirTest {
     }
 
     @BeforeEach
-    public void setUp() throws IOException {
-        FileUtils.deleteDirectory(Paths.get(System.getenv("BUILD_DIR"), "tmp", "dirtests").toFile());
+    public void setUp() {
+        gitContainer.emptyRepo();
     }
 
     @DisplayName(".\n===\n"
-            + "Given one kubernetes account defined in a file in a directory\n"
-            + "  And a new account file is added to the directory\n"
+            + "Given one kubernetes account in git\n"
+            + "  And git ssh authentication\n"
+            + "  And a new account file is added to git\n"
             + "When sending GET /credentials request\n"
             + "Then it should return two kubernetes accounts\n===")
     @Test
     public void shouldAddNewAccount() throws IOException, InterruptedException {
         // given
-        String fileContents = TestUtils.loadYaml("test_files/kube-single.yml")
+        Map<String, Object> fileContents = TestUtils.loadYaml("test_files/kube-single.yml")
                 .withValue("kubernetes.accounts[0].name", "kube-1")
-                .asString();
-        FileUtils.writeStringToFile(
-                Paths.get(System.getenv("BUILD_DIR"), "tmp", "dirtests", "kube-acc-1.yml").toFile(),
-                fileContents,
-                Charset.defaultCharset());
-
+                .asMap();
+        gitContainer.addFileContentsToRepo(fileContents, "kubernetes", "kube-single-1.yml");
         TestUtils.repeatUntilTrue(() -> {
             System.out.println("> GET /credentials");
             Response response = given().get(baseUrl() + "/credentials");
@@ -89,11 +91,8 @@ public class DirTest {
 
         fileContents = TestUtils.loadYaml("test_files/kube-single.yml")
                 .withValue("kubernetes.accounts[0].name", "kube-2")
-                .asString();
-        FileUtils.writeStringToFile(
-                Paths.get(System.getenv("BUILD_DIR"), "tmp", "dirtests", "kube-acc-2.yml").toFile(),
-                fileContents,
-                Charset.defaultCharset());
+                .asMap();
+        gitContainer.addFileContentsToRepo(fileContents, "kubernetes", "kube-single-2.yml");
 
         TestUtils.repeatUntilTrue(() -> {
             // when

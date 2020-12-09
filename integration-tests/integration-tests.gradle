@@ -50,7 +50,7 @@ dependencies {
 task integrationTest(type: Test) {
   description = 'Runs integration tests.'
   group = 'verification'
-  dependsOn(':releaseBundle')
+  dependsOn(':clean', ':releaseBundle')
 
   environment "PROJECT_ROOT", project.rootDir.toString()
   environment "BUILD_DIR", "$buildDir"

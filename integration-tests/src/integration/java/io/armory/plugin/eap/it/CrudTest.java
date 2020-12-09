@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.armory.plugin.eap.it.git;
+package io.armory.plugin.eap.it;
 
 import io.armory.plugin.eap.it.utils.TestUtils;
 import io.restassured.path.json.JsonPath;
@@ -29,12 +29,11 @@ import java.util.concurrent.TimeUnit;
 
 import static io.restassured.RestAssured.given;
 
-public class CrudTest extends BaseGitTest {
+public class CrudTest extends BaseTest {
 
     @DisplayName(".\n===\n"
-            + "Given one kubernetes account defined in git\n"
-            + "  And ssh git authentication\n"
-            + "  And a new account file is added to git\n"
+            + "Given one kubernetes account in a file\n"
+            + "  And a new account file is added to the same dir\n"
             + "When sending GET /credentials request\n"
             + "Then it should return two kubernetes accounts\n===")
     @Test
@@ -43,7 +42,7 @@ public class CrudTest extends BaseGitTest {
         Map<String, Object> fileContents = TestUtils.loadYaml("test_files/kube-single.yml")
                 .withValue("kubernetes.accounts[0].name", "kube-1")
                 .asMap();
-        gitContainer.addFileContentsToRepo(fileContents, "kubernetes", "kube-single-1.yml");
+        TestUtils.addFileContentsToTestsDir(fileContents, "kubernetes", "kube-single-1.yml");
         TestUtils.repeatUntilTrue(() -> {
             System.out.println("> GET /credentials");
             Response response = given().get(baseUrl() + "/credentials");
@@ -57,7 +56,7 @@ public class CrudTest extends BaseGitTest {
         fileContents = TestUtils.loadYaml("test_files/kube-single.yml")
                 .withValue("kubernetes.accounts[0].name", "kube-2")
                 .asMap();
-        gitContainer.addFileContentsToRepo(fileContents, "kubernetes", "kube-single-2.yml");
+        TestUtils.addFileContentsToTestsDir(fileContents, "kubernetes", "kube-single-2.yml");
 
         TestUtils.repeatUntilTrue(() -> {
             // when
@@ -74,9 +73,8 @@ public class CrudTest extends BaseGitTest {
     }
 
     @DisplayName(".\n===\n"
-            + "Given two kubernetes accounts defined in two files in git\n"
-            + "  And ssh git authentication\n"
-            + "  And one file is deleted from git\n"
+            + "Given two kubernetes accounts defined in two files\n"
+            + "  And one file is deleted\n"
             + "When sending GET /credentials request\n"
             + "Then it should return one account\n===")
     @Test
@@ -85,11 +83,11 @@ public class CrudTest extends BaseGitTest {
         Map<String, Object> fileContents = TestUtils.loadYaml("test_files/kube-single.yml")
                 .withValue("kubernetes.accounts[0].name", "kube-1")
                 .asMap();
-        gitContainer.addFileContentsToRepo(fileContents, "kubernetes", "kube-single-1.yml");
+        TestUtils.addFileContentsToTestsDir(fileContents, "kubernetes", "kube-single-1.yml");
         fileContents = TestUtils.loadYaml("test_files/kube-single.yml")
                 .withValue("kubernetes.accounts[0].name", "kube-2")
                 .asMap();
-        gitContainer.addFileContentsToRepo(fileContents, "kubernetes", "kube-single-2.yml");
+        TestUtils.addFileContentsToTestsDir(fileContents, "kubernetes", "kube-single-2.yml");
 
         TestUtils.repeatUntilTrue(() -> {
             System.out.println("> GET /credentials");
@@ -101,7 +99,7 @@ public class CrudTest extends BaseGitTest {
         }, ACCOUNTS_REGISTERED_TIMEOUT_SEC, TimeUnit.SECONDS, "Waited " + ACCOUNTS_REGISTERED_TIMEOUT_SEC +
                 " seconds for accounts \"kube-1\" and \"kube-2\" to show in /credentials endpoint");
 
-        gitContainer.removeFileFromRepo("kubernetes/kube-single-2.yml");
+        TestUtils.deleteFileFromTestsDir("kubernetes/kube-single-2.yml");
 
         TestUtils.repeatUntilTrue(() -> {
             // when
@@ -118,9 +116,8 @@ public class CrudTest extends BaseGitTest {
     }
 
     @DisplayName(".\n===\n"
-            + "Given one kubernetes account defined in git\n"
-            + "  And ssh git authentication\n"
-            + "  And account definition is changed in git\n"
+            + "Given one kubernetes account in a file\n"
+            + "  And account definition is changed\n"
             + "When sending GET /credentials request\n"
             + "Then it should return updated account definition\n===")
     @Test
@@ -130,7 +127,7 @@ public class CrudTest extends BaseGitTest {
                 .withValue("kubernetes.accounts[0].name", "kube-1")
                 .withValue("kubernetes.accounts[0].cacheThreads", "1")
                 .asMap();
-        gitContainer.addFileContentsToRepo(fileContents, "kubernetes", "kube-single.yml");
+        TestUtils.addFileContentsToTestsDir(fileContents, "kubernetes", "kube-single.yml");
 
         TestUtils.repeatUntilTrue(() -> {
             System.out.println("> GET /credentials");
@@ -147,7 +144,7 @@ public class CrudTest extends BaseGitTest {
                 .withValue("kubernetes.accounts[0].name", "kube-1")
                 .withValue("kubernetes.accounts[0].cacheThreads", "2")
                 .asMap();
-        gitContainer.addFileContentsToRepo(fileContents, "kubernetes", "kube-single.yml");
+        TestUtils.addFileContentsToTestsDir(fileContents, "kubernetes", "kube-single.yml");
 
         TestUtils.repeatUntilTrue(() -> {
             // when
@@ -166,8 +163,7 @@ public class CrudTest extends BaseGitTest {
     }
 
     @DisplayName(".\n===\n"
-            + "Given one kubernetes account defined in git\n"
-            + "  And ssh git authentication\n"
+            + "Given one kubernetes account in a file\n"
             + "  And account having a env var placeholder ${}\n"
             + "When sending GET /credentials request\n"
             + "Then it should return one kubernetes account with the placeholder replaced with the env var value\n===")
@@ -177,7 +173,7 @@ public class CrudTest extends BaseGitTest {
         Map<String, Object> fileContents = TestUtils.loadYaml("test_files/kube-single.yml")
                 .withValue("kubernetes.accounts[0].name", "${HOME}")
                 .asMap();
-        gitContainer.addFileContentsToRepo(fileContents, "kubernetes", "kube-single-1.yml");
+        TestUtils.addFileContentsToTestsDir(fileContents, "kubernetes", "kube-single-1.yml");
 
         TestUtils.repeatUntilTrue(() -> {
             // when

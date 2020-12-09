@@ -1,6 +1,7 @@
 armory:
   eap:
-    git:
+    dir: test  # Dynamically set at runtime
+    jGitPoller:
       enabled: true
       syncIntervalSecs: 5
       repo: git # Dynamically set at runtime
@@ -9,8 +10,6 @@ armory:
       sshPrivateKeyPassphrase: PiqPb2m_FodJmV.L
       sshKnownHostsFilePath: ${SSH_KEYS}/known_hosts
       sshTrustUnknownHosts: false
-      configFilePrefix:
-        default: clouddriver
 
 credentials:
   poller:
