@@ -1,11 +1,11 @@
-package io.armory.plugin.eap.sync;
+package io.armory.plugin.eap.pollers;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
+import io.armory.plugin.eap.EAPConfigurationProperties;
 import io.armory.plugin.eap.EAPException;
-import io.armory.plugin.eap.config.EAPConfigurationProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.jgit.api.*;
 import org.eclipse.jgit.api.errors.GitAPIException;
@@ -20,7 +20,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 @Slf4j
-public class GitSync implements Runnable {
+public class JgitPoller implements Runnable {
 
     private final EAPConfigurationProperties configProperties;
     private final AuthType authType;
@@ -32,7 +32,7 @@ public class GitSync implements Runnable {
         NONE
     }
 
-    public GitSync(EAPConfigurationProperties configProperties) {
+    public JgitPoller(EAPConfigurationProperties configProperties) {
         this.configProperties = configProperties;
         if (!StringUtils.isEmpty(this.configProperties.getGit().getUsername()) &&
                 !StringUtils.isEmpty(this.configProperties.getGit().getPassword())) {
@@ -46,7 +46,7 @@ public class GitSync implements Runnable {
         }
         ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor(
                 new ThreadFactoryBuilder()
-                        .setNameFormat(GitSync.class.getSimpleName() + "-%d")
+                        .setNameFormat(JgitPoller.class.getSimpleName() + "-%d")
                         .build());
         executor.scheduleAtFixedRate(this, 0,
                 configProperties.getGit().getSyncIntervalSecs(), TimeUnit.SECONDS);

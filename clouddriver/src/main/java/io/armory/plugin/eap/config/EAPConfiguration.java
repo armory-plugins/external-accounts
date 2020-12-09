@@ -7,9 +7,10 @@ import com.netflix.spinnaker.clouddriver.kubernetes.config.KubernetesConfigurati
 import com.netflix.spinnaker.credentials.definition.CredentialsDefinitionSource;
 import com.netflix.spinnaker.kork.plugins.api.spring.ExposeToApp;
 import com.netflix.spinnaker.kork.secrets.SecretManager;
+import io.armory.plugin.eap.EAPConfigurationProperties;
 import io.armory.plugin.eap.loaders.DirectoryCredentialsLoader;
 import io.armory.plugin.eap.loaders.URLCredentialsLoader;
-import io.armory.plugin.eap.sync.GitSync;
+import io.armory.plugin.eap.pollers.JgitPoller;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -25,8 +26,8 @@ public class EAPConfiguration {
     public class GitCredentialSource {
 
         @Bean
-        public GitSync gitSync(EAPConfigurationProperties configProperties) {
-            return new GitSync(configProperties);
+        public JgitPoller gitSync(EAPConfigurationProperties configProperties) {
+            return new JgitPoller(configProperties);
         }
 
         @Bean

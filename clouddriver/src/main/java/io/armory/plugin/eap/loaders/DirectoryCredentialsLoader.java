@@ -3,7 +3,7 @@ package io.armory.plugin.eap.loaders;
 import com.netflix.spinnaker.credentials.definition.CredentialsDefinition;
 import com.netflix.spinnaker.credentials.definition.CredentialsDefinitionSource;
 import com.netflix.spinnaker.kork.secrets.SecretManager;
-import io.armory.plugin.eap.config.EAPConfigurationProperties;
+import io.armory.plugin.eap.EAPConfigurationProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.jetbrains.annotations.NotNull;

@@ -1,6 +1,8 @@
 rootProject.name='eap'
 
-include 'clouddriver',
+include 'common',
+        'clouddriver',
+        'git-poller',
         'integration-tests'
 
 def setBuildFile(project) {

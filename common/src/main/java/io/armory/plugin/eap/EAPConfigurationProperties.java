@@ -1,8 +1,7 @@
-package io.armory.plugin.eap.config;
+package io.armory.plugin.eap;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.armory.plugin.eap.EAPException;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;

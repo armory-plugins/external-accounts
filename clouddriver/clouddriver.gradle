@@ -5,7 +5,6 @@ buildscript {
 }
 
 apply plugin: "io.spinnaker.plugin.service-extension"
-apply plugin: "maven-publish"
 
 sourceCompatibility = 1.11
 targetCompatibility = 1.11
@@ -17,6 +16,9 @@ spinnakerPlugin {
 }
 
 dependencies {
+    implementation project(":common")
+    implementation project(":git-poller")
+
     compileOnly(group: 'org.pf4j', name: 'pf4j', version: "${pf4jVersion}")
     compileOnly(group: 'com.netflix.spinnaker.kork', name: 'kork-plugins', version: "${korkVersion}")
     compileOnly(group: 'com.netflix.spinnaker.kork', name: 'kork-plugins-spring-api', version: "${korkVersion}")

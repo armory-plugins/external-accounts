@@ -2,7 +2,7 @@ package io.armory.plugin.eap.loaders;
 
 import com.netflix.spinnaker.clouddriver.kubernetes.config.KubernetesConfigurationProperties;
 import com.netflix.spinnaker.kork.secrets.SecretManager;
-import io.armory.plugin.eap.config.EAPConfigurationProperties;
+import io.armory.plugin.eap.EAPConfigurationProperties;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.stubbing.Answer;

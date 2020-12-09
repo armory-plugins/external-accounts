@@ -13,8 +13,8 @@ import com.netflix.spinnaker.clouddriver.kubernetes.config.KubernetesConfigurati
 import com.netflix.spinnaker.credentials.definition.CredentialsDefinition;
 import com.netflix.spinnaker.credentials.definition.CredentialsDefinitionSource;
 import com.netflix.spinnaker.kork.secrets.SecretManager;
+import io.armory.plugin.eap.EAPConfigurationProperties;
 import io.armory.plugin.eap.EAPException;
-import io.armory.plugin.eap.config.EAPConfigurationProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.yaml.snakeyaml.Yaml;
