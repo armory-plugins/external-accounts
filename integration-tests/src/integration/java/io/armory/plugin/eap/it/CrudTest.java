@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.armory.plugin.eap.it.git;
+package io.armory.plugin.eap.it;
 
 import io.armory.plugin.eap.it.utils.TestUtils;
 import io.restassured.path.json.JsonPath;
@@ -29,7 +29,7 @@ import java.util.concurrent.TimeUnit;
 
 import static io.restassured.RestAssured.given;
 
-public class CrudTest extends BaseGitTest {
+public class CrudTest extends BaseTest {
 
     @DisplayName(".\n===\n"
             + "Given one kubernetes account defined in git\n"

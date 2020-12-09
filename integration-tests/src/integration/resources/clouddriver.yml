@@ -1,8 +1,17 @@
 armory:
   eap:
-    dir:
+    dir: /tmp/eap-test
+    jGitPoller:
       enabled: true
-      path: ${BUILD_DIR}/tmp/dirtests
+      syncIntervalSecs: 5
+      repo: git # Dynamically set at runtime
+      branch: master
+      sshPrivateKeyFilePath: ${SSH_KEYS}/id_test_rsa
+      sshPrivateKeyPassphrase: PiqPb2m_FodJmV.L
+      sshKnownHostsFilePath: ${SSH_KEYS}/known_hosts
+      sshTrustUnknownHosts: false
+      configFilePrefix:
+        default: clouddriver
 
 credentials:
   poller:

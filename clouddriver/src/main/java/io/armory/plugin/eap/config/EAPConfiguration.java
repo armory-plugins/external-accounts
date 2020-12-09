@@ -1,3 +1,19 @@
+/*
+ * Copyright 2020 Armory
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.armory.plugin.eap.config;
 
 import com.netflix.spinnaker.clouddriver.aws.security.config.CredentialsConfig;
@@ -16,156 +32,97 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 @Configuration
 @EnableConfigurationProperties(EAPConfigurationProperties.class)
 public class EAPConfiguration {
 
-    @ConditionalOnProperty("armory.eap.git.enabled")
-    public class GitCredentialSource {
-
-        @Bean
-        public JgitPoller gitSync(EAPConfigurationProperties configProperties) {
-            return new JgitPoller(configProperties);
-        }
-
-        @Bean
-        @ExposeToApp
-        public CredentialsDefinitionSource<KubernetesConfigurationProperties.ManagedAccount>
-        kubernetesCredentialSource(EAPConfigurationProperties configProperties, SecretManager secretManager) {
+    @Bean
+    @ExposeToApp
+    public CredentialsDefinitionSource<KubernetesConfigurationProperties.ManagedAccount>
+    kubernetesCredentialSource(EAPConfigurationProperties configProperties, SecretManager secretManager) {
+        if (configProperties.getDir() != null) {
+            Path dir = configProperties.getJGitPoller().isEnabled() ?
+                    Paths.get(configProperties.getDir().toString(), configProperties.getJGitPoller().getRepoSubdir()) :
+                    configProperties.getDir();
             return new DirectoryCredentialsLoader<>(
-                    Paths.get(configProperties.getGit().getLocalCloneDir(), configProperties.getGit().getRepoSubdir()),
+                    dir,
                     KubernetesConfigurationProperties.ManagedAccount.class,
                     secretManager,
-                    configProperties.getGit().getConfigFilePrefix().getDefault(),
-                    configProperties.getGit().getConfigFilePrefix().getKubernetes());
-        }
-
-        @Bean
-        @ExposeToApp
-        public CredentialsDefinitionSource<CloudFoundryConfigurationProperties.ManagedAccount>
-        cloudFoundryCredentialSource(EAPConfigurationProperties configProperties, SecretManager secretManager) {
-            return new DirectoryCredentialsLoader<>(
-                    Paths.get(configProperties.getGit().getLocalCloneDir(), configProperties.getGit().getRepoSubdir()),
-                    CloudFoundryConfigurationProperties.ManagedAccount.class,
-                    secretManager,
-                    configProperties.getGit().getConfigFilePrefix().getDefault(),
-                    configProperties.getGit().getConfigFilePrefix().getCloudfoundry());
-        }
-
-        @Bean
-        @ExposeToApp
-        public CredentialsDefinitionSource<CredentialsConfig.Account>
-        amazonCredentialsSource(EAPConfigurationProperties configProperties, SecretManager secretManager) {
-            return new DirectoryCredentialsLoader<>(
-                    Paths.get(configProperties.getGit().getLocalCloneDir(), configProperties.getGit().getRepoSubdir()),
-                    CredentialsConfig.Account.class,
-                    secretManager,
-                    configProperties.getGit().getConfigFilePrefix().getDefault(),
-                    configProperties.getGit().getConfigFilePrefix().getAws());
-        }
-
-        @Bean
-        @ExposeToApp
-        public CredentialsDefinitionSource<ECSCredentialsConfig.Account>
-        ecsCredentialsSource(EAPConfigurationProperties configProperties, SecretManager secretManager) {
-            return new DirectoryCredentialsLoader<>(
-                    Paths.get(configProperties.getGit().getLocalCloneDir(), configProperties.getGit().getRepoSubdir()),
-                    ECSCredentialsConfig.Account.class,
-                    secretManager,
-                    configProperties.getGit().getConfigFilePrefix().getDefault(),
-                    configProperties.getGit().getConfigFilePrefix().getEcs());
-        }
-    }
-
-    @ConditionalOnProperty("armory.eap.dir.enabled")
-    public class DirCredentialSource {
-
-        @Bean
-        @ExposeToApp
-        public CredentialsDefinitionSource<KubernetesConfigurationProperties.ManagedAccount>
-        kubernetesCredentialSource(EAPConfigurationProperties configProperties, SecretManager secretManager) {
-            return new DirectoryCredentialsLoader<>(
-                    configProperties.getDir().getPath(),
-                    KubernetesConfigurationProperties.ManagedAccount.class,
-                    secretManager,
-                    configProperties.getDir().getConfigFilePrefix().getDefault(),
-                    configProperties.getDir().getConfigFilePrefix().getKubernetes());
-        }
-
-        @Bean
-        @ExposeToApp
-        public CredentialsDefinitionSource<CloudFoundryConfigurationProperties.ManagedAccount>
-        cloudFoundryCredentialSource(EAPConfigurationProperties configProperties, SecretManager secretManager) {
-            return new DirectoryCredentialsLoader<>(
-                    configProperties.getDir().getPath(),
-                    CloudFoundryConfigurationProperties.ManagedAccount.class,
-                    secretManager,
-                    configProperties.getDir().getConfigFilePrefix().getDefault(),
-                    configProperties.getDir().getConfigFilePrefix().getCloudfoundry());
-        }
-
-        @Bean
-        @ExposeToApp
-        public CredentialsDefinitionSource<CredentialsConfig.Account>
-        amazonCredentialsSource(EAPConfigurationProperties configProperties, SecretManager secretManager) {
-            return new DirectoryCredentialsLoader<>(
-                    configProperties.getDir().getPath(),
-                    CredentialsConfig.Account.class,
-                    secretManager,
-                    configProperties.getDir().getConfigFilePrefix().getDefault(),
-                    configProperties.getDir().getConfigFilePrefix().getAws());
-        }
-
-        @Bean
-        @ExposeToApp
-        public CredentialsDefinitionSource<ECSCredentialsConfig.Account>
-        ecsCredentialsSource(EAPConfigurationProperties configProperties, SecretManager secretManager) {
-            return new DirectoryCredentialsLoader<>(
-                    configProperties.getDir().getPath(),
-                    ECSCredentialsConfig.Account.class,
-                    secretManager,
-                    configProperties.getDir().getConfigFilePrefix().getDefault(),
-                    configProperties.getDir().getConfigFilePrefix().getEcs());
-        }
-    }
-
-    @ConditionalOnProperty("armory.eap.url.enabled")
-    public class UrlCredentialSource {
-
-        @Bean
-        @ExposeToApp
-        public CredentialsDefinitionSource<KubernetesConfigurationProperties.ManagedAccount>
-        kubernetesCredentialSource(EAPConfigurationProperties configProperties, SecretManager secretManager) {
-            return new URLCredentialsLoader<>(configProperties.getUrl().getUrl(), configProperties.getUrl().getFormat(),
+                    configProperties.getFilePrefix().getDefault(),
+                    configProperties.getFilePrefix().getKubernetes());
+        } else {
+            return new URLCredentialsLoader<>(configProperties.getUrl(), configProperties.getUrlContentFormat(),
                     KubernetesConfigurationProperties.ManagedAccount.class, secretManager);
         }
+    }
 
-        @Bean
-        @ExposeToApp
-        public CredentialsDefinitionSource<CloudFoundryConfigurationProperties.ManagedAccount>
-        cloudFoundryCredentialSource(EAPConfigurationProperties configProperties, SecretManager secretManager) {
-            return new URLCredentialsLoader<>(configProperties.getUrl().getUrl(), configProperties.getUrl().getFormat(),
+    @Bean
+    @ExposeToApp
+    public CredentialsDefinitionSource<CloudFoundryConfigurationProperties.ManagedAccount>
+    cloudFoundryCredentialSource(EAPConfigurationProperties configProperties, SecretManager secretManager) {
+        if (configProperties.getDir() != null) {
+            Path dir = configProperties.getJGitPoller().isEnabled() ?
+                    Paths.get(configProperties.getDir().toString(), configProperties.getJGitPoller().getRepoSubdir()) :
+                    configProperties.getDir();
+            return new DirectoryCredentialsLoader<>(
+                    dir,
+                    CloudFoundryConfigurationProperties.ManagedAccount.class,
+                    secretManager,
+                    configProperties.getFilePrefix().getDefault(),
+                    configProperties.getFilePrefix().getCloudfoundry());
+        } else {
+            return new URLCredentialsLoader<>(configProperties.getUrl(), configProperties.getUrlContentFormat(),
                     CloudFoundryConfigurationProperties.ManagedAccount.class, secretManager);
         }
+    }
 
-        @Bean
-        @ExposeToApp
-        public CredentialsDefinitionSource<CredentialsConfig.Account>
-        amazonCredentialsSource(EAPConfigurationProperties configProperties, SecretManager secretManager) {
-            return new URLCredentialsLoader<>(configProperties.getUrl().getUrl(), configProperties.getUrl().getFormat(),
+    @Bean
+    @ExposeToApp
+    public CredentialsDefinitionSource<CredentialsConfig.Account>
+    amazonCredentialsSource(EAPConfigurationProperties configProperties, SecretManager secretManager) {
+        if (configProperties.getDir() != null) {
+            Path dir = configProperties.getJGitPoller().isEnabled() ?
+                    Paths.get(configProperties.getDir().toString(), configProperties.getJGitPoller().getRepoSubdir()) :
+                    configProperties.getDir();
+            return new DirectoryCredentialsLoader<>(
+                    dir,
+                    CredentialsConfig.Account.class,
+                    secretManager,
+                    configProperties.getFilePrefix().getDefault(),
+                    configProperties.getFilePrefix().getAws());
+        } else {
+            return new URLCredentialsLoader<>(configProperties.getUrl(), configProperties.getUrlContentFormat(),
                     CredentialsConfig.Account.class, secretManager);
         }
+    }
 
-        @Bean
-        @ExposeToApp
-        public CredentialsDefinitionSource<ECSCredentialsConfig.Account>
-        ecsCredentialsSource(EAPConfigurationProperties configProperties, SecretManager secretManager) {
-            return new URLCredentialsLoader<>(configProperties.getUrl().getUrl(), configProperties.getUrl().getFormat(),
+    @Bean
+    @ExposeToApp
+    public CredentialsDefinitionSource<ECSCredentialsConfig.Account>
+    ecsCredentialsSource(EAPConfigurationProperties configProperties, SecretManager secretManager) {
+        if (configProperties.getDir() != null) {
+            Path dir = configProperties.getJGitPoller().isEnabled() ?
+                    Paths.get(configProperties.getDir().toString(), configProperties.getJGitPoller().getRepoSubdir()) :
+                    configProperties.getDir();
+            return new DirectoryCredentialsLoader<>(
+                    dir,
+                    ECSCredentialsConfig.Account.class,
+                    secretManager,
+                    configProperties.getFilePrefix().getDefault(),
+                    configProperties.getFilePrefix().getEcs());
+        } else {
+            return new URLCredentialsLoader<>(configProperties.getUrl(), configProperties.getUrlContentFormat(),
                     ECSCredentialsConfig.Account.class, secretManager);
         }
     }
 
+    @ConditionalOnProperty("armory.eap.jGitPoller.enabled")
+    @Bean
+    public JgitPoller gitSync(EAPConfigurationProperties configProperties) {
+        return new JgitPoller(configProperties);
+    }
 
 }
