@@ -90,6 +90,17 @@ spec:
                       defaultMode: 0600
 ```
 
+Available environment variables for git poller sidecar
+
+|Name|Description|Default|
+|----|-----------|----------|
+|REPO |Git repository to clone|-|
+|LOCAL_CLONE_DIR |Path in local file system to clone the repo |Automatically generated dir int /tmp|
+|SYNC_INTERVAL_SECS |How often to call "git pull" in seconds|60|
+|GIT_USER |Username for git authentication |-|
+|GIT_PASS |Password for git authentication |-|
+|TOKEN |Personal access token to use for authentication|-|
+
 If authenticating to git using SSH, a secret with all relevant files (`id_rsa`, `known_hosts`) needs to be provided.
 
 

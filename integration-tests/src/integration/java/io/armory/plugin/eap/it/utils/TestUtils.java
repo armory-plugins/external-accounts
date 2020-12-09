@@ -19,14 +19,15 @@ package io.armory.plugin.eap.it.utils;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Splitter;
+import org.apache.commons.io.FileUtils;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.ResourceLoader;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.SafeConstructor;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UncheckedIOException;
+import java.io.*;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,6 +39,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 public abstract class TestUtils {
 
     private static final int SLEEP_STEP_SECONDS = 5;
+    public static final String TESTS_DIR = System.getenv("BUILD_DIR") + File.separator + "it-tests";
 
     public static TestResourceFile loadYaml(String file) {
         ResourceLoader resourceLoader = new DefaultResourceLoader();
@@ -125,5 +127,29 @@ public abstract class TestUtils {
 
             return this;
         }
+    }
+
+    public static void resetTestsDir() throws IOException {
+        FileUtils.deleteDirectory(new File(TESTS_DIR));
+        FileUtils.forceMkdir(new File(TESTS_DIR));
+    }
+
+    public static void addFileContentsToTestsDir(Map<String, Object> fileContents, String subdir, String fileName) throws IOException {
+        Path filePath = Paths.get(TESTS_DIR, subdir, fileName);
+        FileUtils.forceMkdir(filePath.toFile().getParentFile());
+        FileWriter fileWriter = new FileWriter(filePath.toFile());
+        if (fileName.endsWith("json")) {
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.writeValue(fileWriter, fileContents);
+        } else {
+            Yaml yaml = new Yaml(new SafeConstructor());
+            yaml.dump(fileContents, fileWriter);
+        }
+        fileWriter.flush();
+        fileWriter.close();
+    }
+
+    public static void deleteFileFromTestsDir(String filePath) throws IOException {
+        FileUtils.forceDelete(Paths.get(TESTS_DIR, filePath).toFile());
     }
 }

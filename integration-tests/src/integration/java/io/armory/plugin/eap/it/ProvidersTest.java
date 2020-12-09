@@ -32,8 +32,7 @@ import static io.restassured.RestAssured.given;
 public class ProvidersTest extends BaseTest {
 
     @DisplayName(".\n===\n"
-            + "Given two kubernetes accounts in one file defined in git\n"
-            + "  And ssh git authentication\n"
+            + "Given two kubernetes accounts in one file\n"
             + "When sending GET /credentials request\n"
             + "Then it should return two kubernetes accounts\n===")
     @Test
@@ -43,7 +42,7 @@ public class ProvidersTest extends BaseTest {
                 .withValue("kubernetes.accounts[0].name", "kube-1")
                 .withValue("kubernetes.accounts[1].name", "kube-2")
                 .asMap();
-        gitContainer.addFileContentsToRepo(fileContents, "kubernetes", "kube-multiple.yml");
+        TestUtils.addFileContentsToTestsDir(fileContents, "kubernetes", "kube-multiple.yml");
 
         TestUtils.repeatUntilTrue(() -> {
             // when
@@ -60,8 +59,7 @@ public class ProvidersTest extends BaseTest {
     }
 
     @DisplayName(".\n===\n"
-            + "Given two kubernetes accounts in two files in git\n"
-            + "  And ssh git authentication\n"
+            + "Given two kubernetes accounts in two files\n"
             + "When sending GET /credentials request\n"
             + "Then it should return two kubernetes accounts\n===")
     @Test
@@ -70,12 +68,12 @@ public class ProvidersTest extends BaseTest {
         Map<String, Object> fileContents = TestUtils.loadYaml("test_files/kube-single.yml")
                 .withValue("kubernetes.accounts[0].name", "kube-1")
                 .asMap();
-        gitContainer.addFileContentsToRepo(fileContents, "kubernetes", "kube-single-1.yml");
+        TestUtils.addFileContentsToTestsDir(fileContents, "kubernetes", "kube-single-1.yml");
 
         fileContents = TestUtils.loadYaml("test_files/kube-single.yml")
                 .withValue("kubernetes.accounts[0].name", "kube-2")
                 .asMap();
-        gitContainer.addFileContentsToRepo(fileContents, "kubernetes", "kube-single-2.yml");
+        TestUtils.addFileContentsToTestsDir(fileContents, "kubernetes", "kube-single-2.yml");
 
         TestUtils.repeatUntilTrue(() -> {
             // when
@@ -92,8 +90,7 @@ public class ProvidersTest extends BaseTest {
     }
 
     @DisplayName(".\n===\n"
-            + "Given two CF accounts in one file defined in git\n"
-            + "  And ssh git authentication\n"
+            + "Given two CF accounts in one file\n"
             + "When sending GET /credentials request\n"
             + "Then it should return two CF accounts\n===")
     @Test
@@ -103,7 +100,7 @@ public class ProvidersTest extends BaseTest {
                 .withValue("cloudfoundry.accounts[0].name", "cf-1")
                 .withValue("cloudfoundry.accounts[1].name", "cf-2")
                 .asMap();
-        gitContainer.addFileContentsToRepo(fileContents, "cloudfoundry", "cf-multiple.yml");
+        TestUtils.addFileContentsToTestsDir(fileContents, "cloudfoundry", "cf-multiple.yml");
 
         TestUtils.repeatUntilTrue(() -> {
             // when
@@ -120,8 +117,7 @@ public class ProvidersTest extends BaseTest {
     }
 
     @DisplayName(".\n===\n"
-            + "Given one kubernetes account and one CF account in one file defined in git\n"
-            + "  And ssh git authentication\n"
+            + "Given one kubernetes account and one CF account in one file\n"
             + "When sending GET /credentials request\n"
             + "Then it should return one kubernetes account and one CF account\n===")
     @Test
@@ -131,7 +127,7 @@ public class ProvidersTest extends BaseTest {
                 .withValue("kubernetes.accounts[0].name", "kube-1")
                 .withValue("cloudfoundry.accounts[0].name", "cf-1")
                 .asMap();
-        gitContainer.addFileContentsToRepo(fileContents, null, "clouddriver-mixed.yml");
+        TestUtils.addFileContentsToTestsDir(fileContents, "", "clouddriver-mixed.yml");
 
         TestUtils.repeatUntilTrue(() -> {
             // when
