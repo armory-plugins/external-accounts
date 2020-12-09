@@ -240,3 +240,36 @@ spec:
 ```
 
 Alternatively, the plugin can be installed from a remote plugin repository by replacing `spec.spinnakerConfig.profiles.clouddriver.spinnaker.extensibility.plugins.repositories.eap.url` with the URL of the repository.
+
+### Expected accounts layout
+
+This plugin can read account credentials in the following layouts:
+
+* All accounts from all providers in one file. Example:
+
+    ```yaml
+    kubernetes:
+      accounts:
+      - name: kube-1
+    ...
+
+    cloudfoundry:
+      accounts:
+      - name: cf-1
+      ...
+    ```
+
+* Many accounts from a single provider in one file. Example:
+
+    ```yaml
+    - name: kube-1
+    - name: kube-2
+    ...
+    ```
+
+* One account per file. Example:
+
+    ```yaml
+    name: kube-1
+    ...
+    ```
