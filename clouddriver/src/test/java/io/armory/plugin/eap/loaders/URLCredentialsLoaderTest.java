@@ -26,7 +26,7 @@ import org.mockito.stubbing.Answer;
 import java.io.InputStream;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -159,6 +159,23 @@ class URLCredentialsLoaderTest {
 
         List<KubernetesConfigurationProperties.ManagedAccount> actual = loader.getCredentialsDefinitions();
         assertEquals(System.getenv("HOME"), actual.get(0).getName());
+    }
+
+    @Test
+    public void testReplaceNotDefinedEnvVars() {
+        URLCredentialsLoader<KubernetesConfigurationProperties.ManagedAccount> loader = new URLCredentialsLoader<>(
+                null,
+                EAPConfigurationProperties.FileFormat.YAML,
+                KubernetesConfigurationProperties.ManagedAccount.class,
+                secretManager) {
+            @Override
+            protected InputStream getInputStream() {
+                return URLCredentialsLoaderTest.class.getResourceAsStream("/single-not-env.yml");
+            }
+        };
+
+        List<KubernetesConfigurationProperties.ManagedAccount> actual = loader.getCredentialsDefinitions();
+        assertEquals("${UNKNOWN}", actual.get(0).getName());
     }
 
 }

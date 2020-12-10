@@ -89,8 +89,10 @@ public class URLCredentialsLoader<T extends CredentialsDefinition> implements Cr
                 if (!matcher.matches()) {
                     return value;
                 }
-                log.debug("Property value {} will be replaced with env var {}", value, matcher.group(1));
-                value = value.replaceAll("\\$\\{.*}", System.getenv(matcher.group(1)));
+                String envVarName = matcher.group(1);
+                log.debug("Property value {} will be replaced with env var {}", value, envVarName);
+                Optional<String> envValue = Optional.ofNullable(System.getenv(envVarName));
+                value = value.replaceAll("\\$\\{.*}", envValue.orElse("\\${" + envVarName + "}"));
                 return secretManager.decrypt(value);
             }
         });
