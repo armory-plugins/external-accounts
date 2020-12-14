@@ -113,25 +113,25 @@ jobs:
           draft: false
           prerelease: false
 
-       - name: Upload plugin
-         id: upload-release-asset
-         if: steps.build_type.outputs.build_type == 'release'
-         uses: actions/upload-release-asset@v1
-         env:
-           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-         with:
-           upload_url: ${{ steps.create_release.outputs.upload_url }}
-           asset_path: build/distributions/eap-${{steps.build_type.outputs.version}}.zip
-           asset_name: eap-${{steps.build_type.outputs.version}}.zip
-           asset_content_type: application/zip
+      - name: Upload plugin
+        id: upload-release-asset
+        if: steps.build_type.outputs.build_type == 'release'
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: build/distributions/eap-${{steps.build_type.outputs.version}}.zip
+          asset_name: eap-${{steps.build_type.outputs.version}}.zip
+          asset_content_type: application/zip
 
-       - name: Add release to plugin repo
-         id: add-release
-         if: steps.build_type.outputs.build_type == 'release'
-         uses: armory-io/plugin-metadata-updater@master
-         env:
-           GITHUB_OAUTH: ${{ secrets.GITHUB_TOKEN }}
-         with:
-           metadata: build/distributions/plugin-info.json
-           binary_url: https://github.com/armory-plugins/external-accounts/releases/download/${{ steps.build_type.outputs.version }}/eap-${{ steps.build_type.outputs.version }}.zip
-           metadata_repo_url: https://github.com/armory-plugins/external-accounts
+      - name: Add release to plugin repo
+        id: add-release
+        if: steps.build_type.outputs.build_type == 'release'
+        uses: armory-io/plugin-metadata-updater@master
+        env:
+          GITHUB_OAUTH: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          metadata: build/distributions/plugin-info.json
+          binary_url: https://github.com/armory-plugins/external-accounts/releases/download/${{ steps.build_type.outputs.version }}/eap-${{ steps.build_type.outputs.version }}.zip
+          metadata_repo_url: https://github.com/armory-plugins/external-accounts
