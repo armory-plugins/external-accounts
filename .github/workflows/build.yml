@@ -101,8 +101,37 @@ jobs:
           git tag v${{ steps.build_type.outputs.version }}
           git push origin v${{ steps.build_type.outputs.version }}
 
-      - name: Publish plugin to artifactory
-        if: steps.build_type.outputs.version_type == 'rc' || steps.build_type.outputs.version_type == 'release'
-        run: |
-          curl -H "Authorization: Bearer ${{ secrets.ARTIFACTORY_TOKEN }}" -X PUT "https://armory.jfrog.io/artifactory/plugins/eap/${{ steps.build_type.outputs.version }}/eap-${{ steps.build_type.outputs.version }}.zip" -T build/distributions/eap-${{ steps.build_type.outputs.version }}.zip
-          curl -H "Authorization: Bearer ${{ secrets.ARTIFACTORY_TOKEN }}" -X PUT "https://armory.jfrog.io/artifactory/plugins/eap/plugins.json" -T build/distributions/plugins-remote.json
+      - name: Create Release
+        if: steps.build_type.outputs.build_type == 'release'
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{ steps.build_type.outputs.version }}
+          release_name: v${{ steps.build_type.outputs.version }}
+          draft: false
+          prerelease: false
+
+       - name: Upload plugin
+         id: upload-release-asset
+         if: steps.build_type.outputs.build_type == 'release'
+         uses: actions/upload-release-asset@v1
+         env:
+           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+         with:
+           upload_url: ${{ steps.create_release.outputs.upload_url }}
+           asset_path: build/distributions/eap-${{steps.build_type.outputs.version}}.zip
+           asset_name: eap-${{steps.build_type.outputs.version}}.zip
+           asset_content_type: application/zip
+
+       - name: Add release to plugin repo
+         id: add-release
+         if: steps.build_type.outputs.build_type == 'release'
+         uses: armory-io/plugin-metadata-updater@master
+         env:
+           GITHUB_OAUTH: ${{ secrets.GITHUB_TOKEN }}
+         with:
+           metadata: build/distributions/plugin-info.json
+           binary_url: https://github.com/armory-plugins/external-accounts/releases/download/${{ steps.build_type.outputs.version }}/eap-${{ steps.build_type.outputs.version }}.zip
+           metadata_repo_url: https://github.com/armory-plugins/external-accounts
