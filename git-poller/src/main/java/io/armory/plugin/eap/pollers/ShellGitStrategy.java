@@ -132,12 +132,8 @@ public class ShellGitStrategy implements GitPoller.GitStrategy {
         if (authType != GitPoller.AuthType.SSH) {
             return;
         }
-        ShellResult shellResult = execShellCommand("eval $(ssh-agent -s)");
-        if (shellResult.exitValue != 0) {
-            throw new EAPException("Exception starting ssh agent: " + shellResult.output);
-        }
-        shellResult = execShellCommand(
-                String.format("ssh-add %s", configProperties.getSshPrivateKeyFilePath()),
+        ShellResult shellResult = execShellCommand(
+                String.format("eval $(ssh-agent -s) && ssh-add %s", configProperties.getSshPrivateKeyFilePath()),
                 Optional.ofNullable(configProperties.getSshPrivateKeyPassphrase()).orElse(null));
         if (shellResult.exitValue != 0) {
             throw new EAPException(
