@@ -23,12 +23,12 @@ import org.springframework.util.FileCopyUtils;
 import org.springframework.util.StringUtils;
 
 import java.io.*;
-import java.net.MalformedURLException;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.net.URLEncoder;
+import java.net.*;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -56,6 +56,7 @@ public class ShellGitStrategy implements GitPoller.GitStrategy {
 
     @Override
     public void cloneRepo() throws EAPException {
+        addKnownHosts();
         String prefix = buildCmdPrefix();
         String cloneUrl = buildCloneUrl();
         ShellResult shellResult = execShellCommand(
@@ -126,6 +127,42 @@ public class ShellGitStrategy implements GitPoller.GitStrategy {
             }
         } catch (IOException | InterruptedException e) {
             throw new EAPException("Exception executing command " + command, e);
+        }
+    }
+
+    private void addKnownHosts() {
+        if (authType != GitPoller.AuthType.SSH) {
+            return;
+        }
+
+        String host;
+        try {
+            host = new URL(configProperties.getRepo().replaceAll("^ssh", "https")).getHost();
+        } catch (MalformedURLException e) {
+            throw new EAPException("Exception adding target host to known_hosts", e);
+        }
+        ShellResult shellResult = execShellCommand(String.format("ssh-keygen -F %s", host));
+        if (shellResult.exitValue == 0) {
+            return; // key already added
+        }
+
+        if (!StringUtils.isEmpty(configProperties.getSshKnownHostsFilePath())) {
+            shellResult = execShellCommand(
+                    String.format("mkdir -p %s/.ssh && cat %s >> %s/.ssh/known_hosts",
+                            System.getenv("HOME"), configProperties.getSshKnownHostsFilePath(), System.getenv("HOME")));
+            if (shellResult.getExitValue() != 0) {
+                throw new EAPException("Exception copying provided known_hosts file to home:\n" + shellResult.output);
+            }
+            return;
+        }
+
+        if (configProperties.isSshTrustUnknownHosts()) {
+            shellResult = execShellCommand(
+                    String.format("mkdir -p %s/.ssh && ssh-keyscan -t rsa \"%s\" >> %s/.ssh/known_hosts",
+                            System.getenv("HOME"), host, System.getenv("HOME")));
+            if (shellResult.getExitValue() != 0) {
+                throw new EAPException("Exception adding target host to known_hosts:\n" + shellResult.output);
+            }
         }
     }
 
