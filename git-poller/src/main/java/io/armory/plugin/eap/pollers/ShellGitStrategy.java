@@ -20,13 +20,13 @@ import io.armory.plugin.eap.EAPException;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.util.FileCopyUtils;
+import org.springframework.util.StringUtils;
 
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -56,10 +56,11 @@ public class ShellGitStrategy implements GitPoller.GitStrategy {
 
     @Override
     public void cloneRepo() throws EAPException {
-        prepareBeforeClone();
+        String prefix = buildCmdPrefix();
         String cloneUrl = buildCloneUrl();
         ShellResult shellResult = execShellCommand(
-                String.format("git clone --branch %s --depth 1 %s", configProperties.getBranch(), cloneUrl));
+                String.format("%s git clone --branch %s --depth 1 %s %s",
+                        prefix, configProperties.getBranch(), cloneUrl, (!prefix.equals("") ? "'" : "")));
         if (shellResult.exitValue != 0) {
             throw new EAPException(
                     "Failed to clone git repository " + configProperties.getRepo() + ": " + shellResult.output);
@@ -128,17 +129,15 @@ public class ShellGitStrategy implements GitPoller.GitStrategy {
         }
     }
 
-    private void prepareBeforeClone() {
+    private String buildCmdPrefix() {
         if (authType != GitPoller.AuthType.SSH) {
-            return;
+            return "";
         }
-        ShellResult shellResult = execShellCommand(
-                String.format("eval $(ssh-agent -s) && ssh-add %s", configProperties.getSshPrivateKeyFilePath()),
-                Optional.ofNullable(configProperties.getSshPrivateKeyPassphrase()).orElse(null));
-        if (shellResult.exitValue != 0) {
-            throw new EAPException(
-                    "Exception adding ssh private key: " + shellResult.output);
+        String prefix = "ssh-agent bash -c '";
+        if (!StringUtils.isEmpty(configProperties.getSshPrivateKeyPassphrase())) {
+            prefix += String.format("echo \"%s\" | ", configProperties.getSshPrivateKeyPassphrase());
         }
+        return prefix + String.format("ssh-add %s ; ", configProperties.getSshPrivateKeyFilePath());
     }
 
     private String buildCloneUrl() {

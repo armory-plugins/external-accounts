@@ -18,19 +18,25 @@ package io.armory.plugin.eap.it.utils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.FileUtils;
+import org.springframework.util.FileCopyUtils;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.utility.MountableFile;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.SafeConstructor;
 
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
+import static org.junit.Assert.assertEquals;
 
 public class GitContainer extends GenericContainer<GitContainer> {
 
@@ -64,6 +70,20 @@ public class GitContainer extends GenericContainer<GitContainer> {
         }
         System.setProperty("armory.external-accounts.git-poller.repo", repoUrl);
         initRepo();
+        try {
+            ProcessBuilder builder = new ProcessBuilder();
+            String privateKeyPath = Paths.get(System.getenv("SSH_KEYS"), "id_test_rsa").toAbsolutePath().toString();
+            List<String> cmd = new ArrayList<>(Arrays.asList(String.format("chmod 400 %s", privateKeyPath).split(" ")));
+            builder.redirectErrorStream(true);
+            builder.command(cmd);
+            Process process = builder.start();
+            try (Reader reader = new InputStreamReader(process.getInputStream(), UTF_8)) {
+                String output = FileCopyUtils.copyToString(reader);
+                assertEquals(output, 0, process.waitFor());
+            }
+        } catch (IOException | InterruptedException e) {
+            throw new RuntimeException("Exception running chmod 400 to private key", e);
+        }
     }
 
     private void initRepo() {
