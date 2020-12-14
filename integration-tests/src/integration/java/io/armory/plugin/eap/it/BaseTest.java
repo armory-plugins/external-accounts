@@ -35,7 +35,7 @@ public abstract class BaseTest {
     public static final int ACCOUNTS_REGISTERED_TIMEOUT_SEC = 20;
 
     static {
-        System.setProperty("armory.eap.dir", TestUtils.TESTS_DIR);
+        System.setProperty("armory.external-accounts.dir", TestUtils.TESTS_DIR);
         RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();
     }
 

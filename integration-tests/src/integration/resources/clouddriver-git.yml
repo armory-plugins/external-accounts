@@ -1,15 +1,15 @@
 armory:
-  eap:
+  external-accounts:
     dir: test  # Dynamically set at runtime
-    jGitPoller:
+    git-poller:
       enabled: true
-      syncIntervalSecs: 5
+      sync-interval-secs: 5
       repo: git # Dynamically set at runtime
       branch: master
-      sshPrivateKeyFilePath: ${SSH_KEYS}/id_test_rsa
-      sshPrivateKeyPassphrase: PiqPb2m_FodJmV.L
-      sshKnownHostsFilePath: ${SSH_KEYS}/known_hosts
-      sshTrustUnknownHosts: false
+      ssh-private-key-file-path: ${SSH_KEYS}/id_test_rsa
+      ssh-private-key-passphrase: PiqPb2m_FodJmV.L
+      ssh-known-hosts-file-path: ${SSH_KEYS}/known_hosts
+      ssh-trust-unknown-hosts: false
 
 credentials:
   poller:

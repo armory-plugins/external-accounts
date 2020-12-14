@@ -1,5 +1,5 @@
 armory:
-  eap:
+  external-accounts:
     dir: test  # Dynamically set at runtime
 
 credentials:

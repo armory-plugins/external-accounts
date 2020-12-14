@@ -61,7 +61,7 @@ public class DirectoryCredentialsLoader<T extends CredentialsDefinition> impleme
                 .stream()
                 .filter(f -> filePrefixes.stream().anyMatch(p -> f.getName().startsWith(p)))
                 .forEach(f -> addCredentials(f, result));
-        log.debug("Loaded {} credentials of type {}", result.size(), classType.getCanonicalName());
+        log.info("Loaded {} credentials of type {}", result.size(), classType.getCanonicalName());
         return result;
     }
 
