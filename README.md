@@ -1,15 +1,33 @@
-## external-accounts
+## external-accounts plugin
 
 Dynamically read accounts from external sources.
 
-The plugin can be divided in two parts:
+The plugin reads account credentials information from a single URL (`http(s)` or `file`):
 
-1. Loader: Reads account credentials information from a single URL (`http(s)` or `file`), or from files in a directory in local clouddriver file system.
-1. Poller: Populates the directory in local clouddriver file system, reading accounts information from external sources. Currently only git repositories are supported.
+```yaml
+armory:
+  external-accounts:
+    url: (http|https|file)
+    url-content-format: JSON|YAML
+```
+
+Or from files in a directory in local clouddriver file system:
+
+```yaml
+armory:
+  external-accounts:
+    dir: /tmp/accounts
+    file-prefix:
+      default: clouddriver
+      kubernetes: kube
+```
+
+Any sidecar can populate the accounts directory by pulling information from other sources, and this repository includes an example of how to do that pulling accounts from a git repository. 
+
 
 ### Accounts in git repository, git poller sidecar
 
-Clouddriver has a sidecar with a process that continuously retrieves account information from a git repository, then the plugin within clouddriver loads accounts from the clone.
+A sidecar is deployed to clouddriver that continuously retrieves account information from a git repository, then the plugin within clouddriver loads those accounts from the git clone.
 
 Example configuration using spinnaker operator:
 
@@ -23,19 +41,19 @@ spec:
     profiles:
       clouddriver:
         armory:
-          eap:
-            dir: /tmp/accounts            # (Mandatory). Directory in clouddriver where git repo will be cloned and accounts will be loaded
-            configFilePrefix:             # (Optional). Configures the file prefixes to look for account information within the directory
-              default: clouddriver        # (Optional, default: clouddriver). All files with this prefix will be scanned for loading any type of account for the supported providers
-              kubernetes: kube            # (Optional, default: kube). All files with this prefix will be scanned for loading kubernetes accounts
-              cloudfoundry: cf            # (Optional, default: cf). All files with this prefix will be scanned for loading cloudfoundry accounts
-              aws: aws                    # (Optional, default: aws). All files with this prefix will be scanned for loading AWS accounts
-              ecs: ecs                    # (Optional, default: ecs). All files with this prefix will be scanned for loading ECS accounts
+          external-accounts:
+            dir: /tmp/accounts       # (Mandatory). directory in clouddriver where git repo will be cloned and accounts will be loaded from
+            file-prefix:             # (Optional). Configures the file prefixes to look for account information within the directory
+              default: clouddriver   # (Optional, default: clouddriver). All files with this prefix will be scanned for loading any type of account for the supported providers
+              kubernetes: kube       # (Optional, default: kube). All files with this prefix will be scanned for loading kubernetes accounts
+              cloudfoundry: cf       # (Optional, default: cf). All files with this prefix will be scanned for loading cloudfoundry accounts
+              aws: aws               # (Optional, default: aws). All files with this prefix will be scanned for loading AWS accounts
+              ecs: ecs               # (Optional, default: ecs). All files with this prefix will be scanned for loading ECS accounts
         credentials:
           poller:
             enabled: true
             types:
-              kubernetes:                 # (Mandatory for each provider used: kubernetes, cloudfoundry, aws or ecs). Indicates how often account information should be read from the files
+              kubernetes:            # (Mandatory for each provider used: kubernetes, cloudfoundry, aws or ecs). Indicates how often account information should be read from the files
                 reloadFrequencyMs: 60000
         spinnaker:
           extensibility:
@@ -58,7 +76,7 @@ spec:
                   - name: eap
                     image: docker.io/armory/eap-plugin:<PLUGIN_VERSION>
                     command:
-                    - git-poller
+                    - git-poller 
                     env:
                     - name: REPO
                       value: "git@github.com:myorg/myrepo.git"    # Git repository to clone
@@ -104,9 +122,9 @@ Available environment variables for git poller sidecar
 If authenticating to git using SSH, a secret with all relevant files (`id_rsa`, `known_hosts`) needs to be provided.
 
 
-### Accounts in git repository, embedded jgit poller
+### Accounts in git repository, embedded git poller
 
-The plugin inside clouddriver pulls the git repository using jgit, and loads account information.
+In this case the plugin inside clouddriver pulls the git repository and loads account information. All git interaction is done through shell calls to `git` binary, and if that is not found the plugin fallbacks to using `jgit`. `jgit` has known performance issues, so it's recommended to be used only if the other options are not available.
 
 Example configuration using spinnaker operator:
 
@@ -120,31 +138,31 @@ spec:
     profiles:
       clouddriver:
         armory:
-          eap:
-            dir: /tmp/eap-test
-            jGitPoller:
+          external-accounts:
+            dir: /tmp/accounts                      # (Mandatory). directory in clouddriver where git repo will be cloned and accounts will be loaded from
+            git-poller:
               enabled: true
-              syncIntervalSecs: 60                  # (Optional, default: 60). How often to do "git pull"
+              sync-interval-secs: 5                 # (Optional, default: 60). How often to do "git pull"
               repo: git@github.com:myorg/myrepo.git # (Mandatory). Git repo to clone
               branch: master                        # (Optional, default: master). Branch from the repo to clone
               username: john                        # (Optional). Used with user/password authentication
               password: secret                      # (Optional). Used with user/password authentication
               token: secret                         # (Optional). Used with token based authentication
-              sshPrivateKeyFilePath: /id_rsa        # (Optional). Used with SSH authentication
-              sshPrivateKeyPassphrase: secret       # (Optional). Used with SSH authentication
-              sshKnownHostsFilePath: /known_hosts   # (Optional). Used with SSH authentication
-              sshTrustUnknownHosts: false           # (Optional). Used with SSH authentication
-            configFilePrefix:             # (Optional). Configures the file prefixes to look for account information within the directory
-              default: clouddriver        # (Optional, default: clouddriver). All files with this prefix will be scanned for loading any type of account for the supported providers
-              kubernetes: kube            # (Optional, default: kube). All files with this prefix will be scanned for loading kubernetes accounts
-              cloudfoundry: cf            # (Optional, default: cf). All files with this prefix will be scanned for loading cloudfoundry accounts
-              aws: aws                    # (Optional, default: aws). All files with this prefix will be scanned for loading AWS accounts
-              ecs: ecs                    # (Optional, default: ecs). All files with this prefix will be scanned for loading ECS accounts
+              ssh-private-key-file-path: ${SSH_KEYS}/id_rsa       # (Optional). Used with SSH authentication
+              ssh-private-key-passphrase: secret                  # (Optional). Used with SSH authentication
+              ssh-known-hosts-file-path: ${SSH_KEYS}/known_hosts  # (Optional). Used with SSH authentication
+              ssh-trust-unknown-hosts: false                      # (Optional). Used with SSH authentication
+            file-prefix:             # (Optional). Configures the file prefixes to look for account information within the directory
+              default: clouddriver   # (Optional, default: clouddriver). All files with this prefix will be scanned for loading any type of account for the supported providers
+              kubernetes: kube       # (Optional, default: kube). All files with this prefix will be scanned for loading kubernetes accounts
+              cloudfoundry: cf       # (Optional, default: cf). All files with this prefix will be scanned for loading cloudfoundry accounts
+              aws: aws               # (Optional, default: aws). All files with this prefix will be scanned for loading AWS accounts
+              ecs: ecs               # (Optional, default: ecs). All files with this prefix will be scanned for loading ECS accounts
         credentials:
           poller:
             enabled: true
             types:
-              kubernetes:                 # (Mandatory for each provider used: kubernetes, cloudfoundry, aws or ecs). Indicates how often account information should be read from the files
+              kubernetes:             # (Mandatory for each provider used: kubernetes, cloudfoundry, aws or ecs). Indicates how often account information should be read from the files
                 reloadFrequencyMs: 60000
         spinnaker:
           extensibility:
@@ -197,14 +215,14 @@ spec:
     profiles:
       clouddriver:
         armory:
-          eap:
+          external-accounts:
             url: http://server.company/accounts     # (Mandatory). URL where to find account information
-            urlContentFormat: JSON                  # (Mandatory). Content-Type response of the server. Supported formats are JSON and YAML
+            url-content-format: JSON|YAML           # (Mandatory). Content-Type response of the server. Supported formats are JSON and YAML
         credentials:
           poller:
             enabled: true
             types:
-              kubernetes:                 # (Mandatory for each provider used: kubernetes, cloudfoundry, aws or ecs). Indicates how often account information should be read 
+              kubernetes:                           # (Mandatory for each provider used: kubernetes, cloudfoundry, aws or ecs). Indicates how often account information should be read 
                 reloadFrequencyMs: 60000
         spinnaker:
           extensibility:

@@ -50,7 +50,7 @@ public class GitTest {
     static {
         gitContainer.start();
         String tmpDir = System.getProperty("java.io.tmpdir") + File.separator + UUID.randomUUID().toString();
-        System.setProperty("armory.eap.dir", tmpDir);
+        System.setProperty("armory.external-accounts.dir", tmpDir);
         RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();
     }
 

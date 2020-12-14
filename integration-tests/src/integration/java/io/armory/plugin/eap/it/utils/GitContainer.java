@@ -62,7 +62,7 @@ public class GitContainer extends GenericContainer<GitContainer> {
                 repoUrl = "http://" + this.getContainerIpAddress() + ":" + this.getMappedPort(3000) + "/test/test_repo.git";
                 break;
         }
-        System.setProperty("armory.eap.jGitPoller.repo", repoUrl);
+        System.setProperty("armory.external-accounts.git-poller.repo", repoUrl);
         initRepo();
     }
 

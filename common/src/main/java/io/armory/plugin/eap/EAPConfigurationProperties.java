@@ -12,16 +12,17 @@ import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-@ConfigurationProperties("armory.eap")
+@ConfigurationProperties("armory.external-accounts")
 @Data
 @Slf4j
 public class EAPConfigurationProperties {
 
     private String dir;
+    @JsonProperty("file-prefix")
     private ConfigFilePrefix filePrefix = new ConfigFilePrefix();
     private URL url;
+    @JsonProperty("url-content-format")
     private FileFormat urlContentFormat;
-    private GitConfig jGitPoller = new GitConfig();
 
     public enum FileFormat {
         YAML("yaml", "yml"), JSON("json");
@@ -51,32 +52,10 @@ public class EAPConfigurationProperties {
         }
     }
 
-    @Data
-    public static class GitConfig {
-        private boolean enabled = false;
-        private int syncIntervalSecs = 60;
-        private String repo;                             // GitConfig repository to clone
-        private String branch = "master";                // Can be specified as ref name (refs/heads/master), branch name (master) or tag name (v1.2.3)
-        private String repoSubdir = "";
-
-        // auth
-        private String username;
-        private String password;
-        private String token;
-        private String sshPrivateKeyFilePath;
-        private String sshPrivateKeyPassphrase;
-        private String sshKnownHostsFilePath;
-        private boolean sshTrustUnknownHosts = false;
-
-        public Path getRepoSubdirPath() {
-            return Paths.get(repoSubdir);
-        }
-    }
-
     @PostConstruct
     public void init() {
         if (StringUtils.isEmpty(url) && StringUtils.isEmpty(dir)) {
-            throw new EAPException("Either \"dir\" or \"url\" should not be supplied");
+            throw new EAPException("Either \"dir\" or \"url\" should be supplied");
         }
         if (url != null && urlContentFormat == null) {
             throw new EAPException("If \"url\" is defined, \"urlContentFormat\" must be defined as well");
