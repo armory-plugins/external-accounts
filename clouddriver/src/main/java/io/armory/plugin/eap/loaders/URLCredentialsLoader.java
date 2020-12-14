@@ -90,7 +90,7 @@ public class URLCredentialsLoader<T extends CredentialsDefinition> implements Cr
                     return value;
                 }
                 String envVarName = matcher.group(1);
-                log.debug("Property value {} will be replaced with env var {}", value, envVarName);
+                log.debug("Property value {} will be replaced with env var", value);
                 Optional<String> envValue = Optional.ofNullable(System.getenv(envVarName));
                 value = value.replaceAll("\\$\\{.*}", envValue.orElse("\\${" + envVarName + "}"));
                 return secretManager.decrypt(value);
