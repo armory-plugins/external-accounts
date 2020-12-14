@@ -57,7 +57,7 @@ public class ShellGitStrategy implements GitPoller.GitStrategy {
     @Override
     public void cloneRepo() throws EAPException {
         addKnownHosts();
-        String prefix = buildCmdPrefix();
+        String prefix = buildAuthCmdPrefix();
         String cloneUrl = buildCloneUrl();
         ShellResult shellResult = execShellCommand(
                 String.format("%s git clone --branch %s --depth 1 %s %s",
@@ -70,7 +70,10 @@ public class ShellGitStrategy implements GitPoller.GitStrategy {
 
     @Override
     public void pullChanges() throws EAPException {
-        ShellResult shellResult = execShellCommand("cd */ && git pull");
+        String prefix = buildAuthCmdPrefix();
+        ShellResult shellResult = execShellCommand(String.format("%s cd */ && git pull %s",
+                prefix,
+                (!prefix.equals("") ? "'" : prefix)));
         if (shellResult.exitValue != 0) {
             throw new EAPException(
                     "Failed to do \"git pull\" of repository " + configProperties.getRepo() + ": " + shellResult.output);
@@ -166,7 +169,7 @@ public class ShellGitStrategy implements GitPoller.GitStrategy {
         }
     }
 
-    private String buildCmdPrefix() {
+    private String buildAuthCmdPrefix() {
         if (authType != GitPoller.AuthType.SSH) {
             return "";
         }
