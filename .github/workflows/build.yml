@@ -10,6 +10,10 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/setup-java@v1
+        with:
+          java-version: 11
+
       - uses: actions/cache@v1
         with:
           path: ~/.gradle
@@ -127,6 +131,7 @@ jobs:
         uses: armory-io/plugin-metadata-updater@master
         env:
           GITHUB_OAUTH: ${{ secrets.GITHUB_TOKEN }}
+          JAVA_HOME: ${{ env.JAVA_HOME }}/jre
         with:
           metadata: build/distributions/plugin-info.json
           binary_url: https://github.com/armory-plugins/external-accounts/releases/download/${{ steps.build_type.outputs.version }}/eap-${{ steps.build_type.outputs.version }}.zip
