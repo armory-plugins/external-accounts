@@ -138,4 +138,5 @@ jobs:
         if: steps.build_type.outputs.version_type == 'release'
         with:
           branch: master
+          push_options: '--force'
           commit_message: Update plugins.json
