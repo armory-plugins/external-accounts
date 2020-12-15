@@ -77,7 +77,7 @@ task generatePluginsJson {
         File dockerPlugins = new File("$buildDir/distributions/plugins-docker.json")
         dockerPlugins.write(JsonOutput.prettyPrint(JsonOutput.toJson(plugins)))
 
-        pluginInfo.releases[0].url = "https://armory.jfrog.io/artifactory/plugins/eap/${version}/eap-${version}.zip"
+        pluginInfo.releases[0].url = "https://github.com/armory-plugins/external-accounts/releases/download/v${version}/eap-${version}.zip"
         File remotePlugins = new File("$buildDir/distributions/plugins-remote.json")
         remotePlugins.write(JsonOutput.prettyPrint(JsonOutput.toJson(plugins)))
 

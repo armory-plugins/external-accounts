@@ -128,11 +128,12 @@ jobs:
       - name: Add release to plugin repo
         id: add-release
 #        if: steps.build_type.outputs.version_type == 'release'
-        uses: armory-io/plugin-metadata-updater@master
-        env:
-          GITHUB_OAUTH: ${{ secrets.TOKEN }}
-          JAVA_HOME:
+        run: |
+          export ENTRY=$(cat build/distributions/plugins-remote.json)
+          jq ". += ${ENTRY}" plugins.json > plugins.json.tmp
+          mv plugins.json.tmp plugins.json
+
+      - uses: stefanzweifel/git-auto-commit-action@v4
+#        if: steps.build_type.outputs.version_type == 'release'
         with:
-          metadata: build/distributions/plugin-info.json
-          binary_url: https://github.com/armory-plugins/external-accounts/releases/download/${{ steps.build_type.outputs.version }}/eap-${{ steps.build_type.outputs.version }}.zip
-          metadata_repo_url: https://github.com/armory-plugins/external-accounts
+          commit_message: Update plugins.json
