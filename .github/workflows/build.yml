@@ -130,7 +130,7 @@ jobs:
 #        if: steps.build_type.outputs.version_type == 'release'
         uses: armory-io/plugin-metadata-updater@master
         env:
-          GITHUB_OAUTH: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_OAUTH: ${{ secrets.TOKEN }}
           JAVA_HOME:
         with:
           metadata: build/distributions/plugin-info.json
