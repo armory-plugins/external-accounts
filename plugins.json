@@ -1,17 +1,3 @@
 [
-  {
-    "id": "Armory.EAP",
-    "description": "Dynamically load accounts from different sources",
-    "provider": "https://armory.io",
-    "releases": [
-      {
-        "version": "0.2.0-snapshot.chore.java.home.7aa8f0c",
-        "date": "2020-12-15T21:29:55.838923Z",
-        "requires": "clouddriver>=0.0.0",
-        "sha512sum": "02411d61dcb59983eb4d60cdbeddd5e074ae4d488a6829a8ee6962293551deae1f1a1ad2f4e40fadafd5e7876c58176e6dd66fe62d1d49321a459161312097cc",
-        "preferred": false,
-        "url": "https://github.com/armory-plugins/external-accounts/releases/download/v0.2.0-snapshot.chore.java.home.7aa8f0c/eap-0.2.0-snapshot.chore.java.home.7aa8f0c.zip"
-      }
-    ]
-  }
+
 ]

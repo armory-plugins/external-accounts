@@ -127,13 +127,15 @@ jobs:
 
       - name: Add release to plugin repo
         id: add-release
-#        if: steps.build_type.outputs.version_type == 'release'
+        if: steps.build_type.outputs.version_type == 'release'
         run: |
           export ENTRY=$(cat build/distributions/plugins-remote.json)
           jq ". += ${ENTRY}" plugins.json > plugins.json.tmp
           mv plugins.json.tmp plugins.json
 
-      - uses: stefanzweifel/git-auto-commit-action@v4
-#        if: steps.build_type.outputs.version_type == 'release'
+      - name: Commit plugins.json
+        uses: stefanzweifel/git-auto-commit-action@v4
+        if: steps.build_type.outputs.version_type == 'release'
         with:
+          branch: master
           commit_message: Update plugins.json
