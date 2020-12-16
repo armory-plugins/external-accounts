@@ -25,6 +25,16 @@ armory:
 Any sidecar can populate the accounts directory by pulling information from other sources, and this repository includes an example of how to do that pulling accounts from a git repository. 
 
 
+### Spinnaker compatibility
+
+|Min. version|Notes|
+|----|-----------|
+|1.23 |Kubernetes and cloudfoundry implemented|
+|1.24 |AWS and ECS implemented|
+
+NOTE: The plugin is not actively tested in all compatible versions with all variants, but is expected to work in the above.
+
+
 ### Accounts in git repository, git poller sidecar
 
 A sidecar is deployed to clouddriver that continuously retrieves account information from a git repository, then the plugin within clouddriver loads those accounts from the git clone.

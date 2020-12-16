@@ -23,6 +23,8 @@ jobs:
 
       - name: Checkout Code
         uses: actions/checkout@v2
+        with:
+          token: ${{ secrets.TOKEN }}
 
       - name: Fetch full history
         run: git fetch --prune --tags --unshallow
@@ -140,3 +142,5 @@ jobs:
           branch: master
           push_options: '--force'
           commit_message: Update plugins.json
+          commit_user_name: Release Bot
+          commit_user_email: bot@armory.io
