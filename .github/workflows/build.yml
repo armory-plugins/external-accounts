@@ -129,7 +129,7 @@ jobs:
 
       - name: Add release to plugin repo
         id: add-release
-        if: steps.build_type.outputs.version_type == 'release'
+#        if: steps.build_type.outputs.version_type == 'release'
         run: |
           export ENTRY=$(cat build/distributions/plugins-remote.json)
           jq ". += ${ENTRY}" plugins.json > plugins.json.tmp
