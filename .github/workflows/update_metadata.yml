@@ -1,0 +1,22 @@
+name: Update Metadata
+
+on:
+  repository_dispatch:
+    types: UpdateMetadata
+
+jobs:
+  update_metadata:
+    name: Update Metadata ${{ github.event.client_payload.uuid }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout code
+        uses: actions/checkout@v2
+      - name: write metadata
+        run: |
+          mkdir -p ${{ github.event.client_payload.path }}
+          echo '${{ toJson(github.event.client_payload.metadata) }}' > ${{ github.event.client_payload.path }}/${{ github.event.client_payload.file }}
+      - uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: plugin metadata update
+          branch: master
+          file_pattern: ${{ github.event.client_payload.path }}/${{ github.event.client_payload.file }}
