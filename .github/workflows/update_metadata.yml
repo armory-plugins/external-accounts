@@ -9,14 +9,26 @@ jobs:
     name: Update Metadata ${{ github.event.client_payload.uuid }}
     runs-on: ubuntu-latest
     steps:
-      - name: checkout code
+      - name: Checkout Code
         uses: actions/checkout@v2
-      - name: write metadata
+      - name: Write Metadata
         run: |
           mkdir -p ${{ github.event.client_payload.path }}
           echo '${{ toJson(github.event.client_payload.metadata) }}' > ${{ github.event.client_payload.path }}/${{ github.event.client_payload.file }}
-      - uses: stefanzweifel/git-auto-commit-action@v4
+      - name: Create Pull Request
+        id: create-pull-request
+        uses: peter-evans/create-pull-request@v3.5.2
         with:
-          commit_message: plugin metadata update
-          branch: master
-          file_pattern: ${{ github.event.client_payload.path }}/${{ github.event.client_payload.file }}
+          token: ${{ secrets.ASTROLABE_GITHUB_TOKEN }} 
+          branch: metadata-updates
+          delete-branch: true
+      - name: Await Check Suites
+        uses: jitterbit/await-check-suites@v1
+        with:
+          ref: refs/heads/metadata-updates
+      - name: Merge Pull Request
+        uses: sudo-bot/action-pull-request-merge@v1.1.1
+        with:
+          github-token: ${{ secrets.ASTROLABE_GITHUB_TOKEN }}
+          number: ${{ steps.create-pull-request.outputs.pull-request-number }}
+          merge-method: squash
