@@ -1,0 +1,52 @@
+{
+  "id": "Armory.EAP",
+  "releases": [
+    {
+      "compatibility": [
+        {
+          "outcome": "failure",
+          "platformVersions": [
+            "1.24.0"
+          ],
+          "service": "clouddriver",
+          "version": "7.1.0-20201212030017"
+        },
+        {
+          "outcome": "success",
+          "platformVersions": [
+            "1.23.5"
+          ],
+          "service": "clouddriver",
+          "version": "7.1.0-20201212020017"
+        },
+        {
+          "outcome": "success",
+          "platformVersions": [
+            "1.23.4",
+            "1.23.3"
+          ],
+          "service": "clouddriver",
+          "version": "7.0.3-20201201114456"
+        },
+        {
+          "outcome": "failure",
+          "platformVersions": [
+            "1.22.4",
+            "1.22.3"
+          ],
+          "service": "clouddriver",
+          "version": "6.11.2-20201201112312"
+        },
+        {
+          "outcome": "failure",
+          "platformVersions": [
+            "1.22.2"
+          ],
+          "service": "clouddriver",
+          "version": "6.11.1-20201012160101"
+        }
+      ],
+      "version": "0.1.0"
+    }
+  ]
+}
