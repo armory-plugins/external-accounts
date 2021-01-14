@@ -13,5 +13,20 @@
         "url": "https://github.com/armory-plugins/external-accounts/releases/download/v0.1.0/eap-0.1.0.zip"
       }
     ]
+  },
+  {
+    "id": "Armory.EAP",
+    "description": "Dynamically load accounts from different sources",
+    "provider": "https://armory.io",
+    "releases": [
+      {
+        "version": "1.24.0",
+        "date": "2021-01-14T20:12:43.824912Z",
+        "requires": "clouddriver>=0.0.0",
+        "sha512sum": "f1fb41e655987688f8290cf50e45af72a48cac466e7fb8062e5bfeabefad9040a20142348b8236b357984ede45118f15e93114402c5837145f422cadf5a2c2ba",
+        "preferred": false,
+        "url": "https://github.com/armory-plugins/external-accounts/releases/download/v1.24.0/eap-1.24.0.zip"
+      }
+    ]
   }
 ]
