@@ -64,13 +64,13 @@ function build_clone_url() {
     ENCODED_USERNAME=$(url_encode "$GIT_USER")
     ENCODED_PASSWORD=$(url_encode "$GIT_PASS")
     SCHEME=$(echo "$REPO" | sed 's|:.*||')
-    CTX_PATH=$(echo "$REPO" | sed "s|$SCHEME://$TARGET_HOST/||")
-    CLONE_URL="$SCHEME://$ENCODED_USERNAME:$ENCODED_PASSWORD@$TARGET_HOST/$CTX_PATH"
+    CTX_PATH=$(echo "$REPO" | sed "s|$SCHEME://$TARGET_HOST||")
+    CLONE_URL="$SCHEME://$ENCODED_USERNAME:$ENCODED_PASSWORD@$TARGET_HOST$CTX_PATH"
   elif [[ -n $TOKEN  ]]; then
     ENCODED_TOKEN=$(url_encode "$TOKEN")
     SCHEME=$(echo "$REPO" | sed 's|:.*||')
-    CTX_PATH=$(echo "$REPO" | sed "s|$SCHEME://$TARGET_HOST/||")
-    CLONE_URL="$SCHEME://$ENCODED_TOKEN@$TARGET_HOST/$CTX_PATH"
+    CTX_PATH=$(echo "$REPO" | sed "s|$SCHEME://$TARGET_HOST||")
+    CLONE_URL="$SCHEME://$ENCODED_TOKEN@$TARGET_HOST$CTX_PATH"
   else
     CLONE_URL=$REPO
   fi
