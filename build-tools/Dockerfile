@@ -9,6 +9,7 @@ ENV PLUGIN_ID=${PLUGIN_ID}
 RUN apt-get update && \
     apt-get upgrade -y && \
     apt-get install coreutils git -y
+RUN apt-get remove --purge patch -y
 RUN mkdir -p /opt/eap
 
 ADD distributions/${PLUGIN_ID}.zip /opt/eap/
