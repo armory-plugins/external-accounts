@@ -63,6 +63,9 @@ public class EAPConfigurationProperties {
     }
 
     public Path getDir() {
+        if (dir == null) {
+            return null;
+        }
         return Paths.get(dir);
     }
 }
