@@ -35,9 +35,6 @@ subprojects { project ->
 
     repositories {
         mavenCentral()
-        jcenter()
-        maven { url "https://spinnaker-releases.bintray.com/jars" }
-        maven { url "http://dl.bintray.com/spinnaker/spinnaker/" }
     }
 }
 
