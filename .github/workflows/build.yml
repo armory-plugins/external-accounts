@@ -9,6 +9,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      ORG_GRADLE_PROJECT_artifactory_user: '${{secrets.ARTIFACTORY_USER}}'
+      ORG_GRADLE_PROJECT_artifactory_password: '${{secrets.ARTIFACTORY_TOKEN}}'
     steps:
       - uses: actions/setup-java@v1
         with:
