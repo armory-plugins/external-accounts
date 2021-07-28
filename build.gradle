@@ -3,8 +3,6 @@ import groovy.json.JsonOutput
 
 buildscript {
     repositories {
-        jcenter()
-        maven { url 'https://dl.bintray.com/spinnaker/gradle/' }
         maven { url "https://plugins.gradle.org/m2/" }
     }
     dependencies {
@@ -35,9 +33,13 @@ subprojects { project ->
 
     repositories {
         mavenCentral()
-        jcenter()
-        maven { url "https://spinnaker-releases.bintray.com/jars" }
-        maven { url "http://dl.bintray.com/spinnaker/spinnaker/" }
+        maven {
+            url 'https://armory.jfrog.io/artifactory/gradle-dev'
+            credentials {
+                username = "${artifactory_user}"
+                password = "${artifactory_password}"
+            }
+        }
     }
 }
 
