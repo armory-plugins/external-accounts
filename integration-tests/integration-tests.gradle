@@ -2,13 +2,6 @@ plugins {
   id 'com.adarshr.test-logger' version '2.1.0'
 }
 
-repositories {
-  mavenCentral()
-  jcenter()
-  maven { url "https://spinnaker-releases.bintray.com/jars" }
-  maven { url "http://dl.bintray.com/spinnaker/spinnaker/" }
-}
-
 apply plugin: "java-library"
 
 sourceSets {
@@ -26,16 +19,35 @@ configurations {
 dependencies {
   integrationImplementation project(":clouddriver")
 
-  integrationImplementation "com.netflix.spinnaker.clouddriver:clouddriver-web:$clouddriverVersion"
+  integrationImplementation("io.spinnaker.clouddriver:clouddriver-web:$clouddriverVersion") {
+    exclude group: 'com.fasterxml.jackson.module', module: 'jackson-module-kotlin'
+  }
 
   integrationImplementation "org.springframework.boot:spring-boot-starter-test:2.2.5.RELEASE"
   integrationImplementation "org.testcontainers:testcontainers:1.15.0"
   integrationImplementation "org.testcontainers:mysql:1.15.0"
   integrationImplementation "org.testcontainers:junit-jupiter:1.15.0"
   integrationImplementation "com.google.code.gson:gson:2.8.6"
-  integrationImplementation "com.fasterxml.jackson.core:jackson-core:2.11.2"
-  integrationImplementation "com.fasterxml.jackson.core:jackson-annotations:2.11.2"
-  integrationImplementation "com.fasterxml.jackson.core:jackson-databind:2.11.2"
+  integrationImplementation("com.fasterxml.jackson.core:jackson-core") {
+    version {
+      strictly '2.11.1'
+    }
+  }
+  integrationImplementation("com.fasterxml.jackson.core:jackson-annotations") {
+    version {
+      strictly '2.11.1'
+    }
+  }
+  integrationImplementation("com.fasterxml.jackson.core:jackson-databind") {
+    version {
+      strictly '2.11.1'
+    }
+  }
+  integrationImplementation("com.fasterxml.jackson.module:jackson-module-kotlin") {
+    version {
+      strictly '2.11.1'
+    }
+  }
   integrationImplementation "com.google.guava:guava:28.2-jre"
   integrationImplementation "mysql:mysql-connector-java:8.0.20"
   integrationImplementation ("io.rest-assured:rest-assured:4.0.0") {
@@ -54,10 +66,9 @@ task integrationTest(type: Test) {
 
   environment "PROJECT_ROOT", project.rootDir.toString()
   environment "BUILD_DIR", "$buildDir"
+  environment "SSH_ASKPASS", "$project.rootDir/integration-tests/src/integration/resources/askpass.sh"
   environment "GIT_ROOT", "$project.rootDir/integration-tests/src/integration/gitea_data"
   environment "SSH_KEYS", "$project.rootDir/integration-tests/src/integration/resources/ssh"
-  environment "KUBECTL_PATH", "$project.rootDir/integration-tests/src/upstream/resources/kubectl-wrapper.sh"
-  environment "CACHE_THREADS", "1"
 
   useJUnitPlatform()
 
