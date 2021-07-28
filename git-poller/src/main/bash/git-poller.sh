@@ -76,6 +76,10 @@ function build_clone_url() {
   fi
 }
 
+function extract_repo_name() {
+  REPO_NAME=$(echo "$REPO" | sed 's|.*/||' | sed 's|.git||')
+}
+
 function clone() {
   extract_host_from_repo
   if [[ ! -f /root/.ssh/known_hosts || -w /root/.ssh/known_hosts ]] ; then
@@ -86,6 +90,11 @@ function clone() {
   if [[ -f /root/.ssh/id_rsa && -w /root/.ssh/id_rsa ]] ; then
     chmod 400 /root/.ssh/id_rsa
   fi
+
+  # Don't clone again if we're recovering from a crash and the clone already exists
+  extract_repo_name
+  if [[ -d "${LOCAL_CLONE_DIR}/${REPO_NAME}" ]] ; then echo "Directory ${LOCAL_CLONE_DIR}/${REPO_NAME} already exists, skipping clone step" ; return ; fi
+
   build_clone_url
   echo "Cloning $REPO into $LOCAL_CLONE_DIR"
   if [[ -d "LOCAL_CLONE_DIR" ]] ; then mkdir -p "$LOCAL_CLONE_DIR" ; fi
