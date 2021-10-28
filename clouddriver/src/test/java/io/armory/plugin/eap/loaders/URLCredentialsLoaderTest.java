@@ -16,7 +16,7 @@
 
 package io.armory.plugin.eap.loaders;
 
-import com.netflix.spinnaker.clouddriver.kubernetes.config.KubernetesConfigurationProperties;
+import com.netflix.spinnaker.clouddriver.kubernetes.config.KubernetesAccountProperties;
 import com.netflix.spinnaker.kork.secrets.SecretManager;
 import io.armory.plugin.eap.EAPConfigurationProperties;
 import org.junit.jupiter.api.BeforeEach;
@@ -44,10 +44,10 @@ class URLCredentialsLoaderTest {
 
     @Test
     public void testLoadYamlProviderFile() {
-        URLCredentialsLoader<KubernetesConfigurationProperties.ManagedAccount> loader = new URLCredentialsLoader<>(
+        URLCredentialsLoader<KubernetesAccountProperties.ManagedAccount> loader = new URLCredentialsLoader<>(
                 null,
                 EAPConfigurationProperties.FileFormat.YAML,
-                KubernetesConfigurationProperties.ManagedAccount.class,
+                KubernetesAccountProperties.ManagedAccount.class,
                 secretManager) {
             @Override
             protected InputStream getInputStream() {
@@ -55,16 +55,16 @@ class URLCredentialsLoaderTest {
             }
         };
 
-        List<KubernetesConfigurationProperties.ManagedAccount> actual = loader.getCredentialsDefinitions();
+        List<KubernetesAccountProperties.ManagedAccount> actual = loader.getCredentialsDefinitions();
         assertEquals(2, actual.size());
     }
 
     @Test
     public void testLoadJsonProviderFile() {
-        URLCredentialsLoader<KubernetesConfigurationProperties.ManagedAccount> loader = new URLCredentialsLoader<>(
+        URLCredentialsLoader<KubernetesAccountProperties.ManagedAccount> loader = new URLCredentialsLoader<>(
                 null,
                 EAPConfigurationProperties.FileFormat.JSON,
-                KubernetesConfigurationProperties.ManagedAccount.class,
+                KubernetesAccountProperties.ManagedAccount.class,
                 secretManager) {
             @Override
             protected InputStream getInputStream() {
@@ -72,16 +72,16 @@ class URLCredentialsLoaderTest {
             }
         };
 
-        List<KubernetesConfigurationProperties.ManagedAccount> actual = loader.getCredentialsDefinitions();
+        List<KubernetesAccountProperties.ManagedAccount> actual = loader.getCredentialsDefinitions();
         assertEquals(2, actual.size());
     }
 
     @Test
     public void testLoadYamlListFile() {
-        URLCredentialsLoader<KubernetesConfigurationProperties.ManagedAccount> loader = new URLCredentialsLoader<>(
+        URLCredentialsLoader<KubernetesAccountProperties.ManagedAccount> loader = new URLCredentialsLoader<>(
                 null,
                 EAPConfigurationProperties.FileFormat.YAML,
-                KubernetesConfigurationProperties.ManagedAccount.class,
+                KubernetesAccountProperties.ManagedAccount.class,
                 secretManager) {
             @Override
             protected InputStream getInputStream() {
@@ -89,16 +89,16 @@ class URLCredentialsLoaderTest {
             }
         };
 
-        List<KubernetesConfigurationProperties.ManagedAccount> actual = loader.getCredentialsDefinitions();
+        List<KubernetesAccountProperties.ManagedAccount> actual = loader.getCredentialsDefinitions();
         assertEquals(2, actual.size());
     }
 
     @Test
     public void testLoadJsonListFile() {
-        URLCredentialsLoader<KubernetesConfigurationProperties.ManagedAccount> loader = new URLCredentialsLoader<>(
+        URLCredentialsLoader<KubernetesAccountProperties.ManagedAccount> loader = new URLCredentialsLoader<>(
                 null,
                 EAPConfigurationProperties.FileFormat.JSON,
-                KubernetesConfigurationProperties.ManagedAccount.class,
+                KubernetesAccountProperties.ManagedAccount.class,
                 secretManager) {
             @Override
             protected InputStream getInputStream() {
@@ -106,16 +106,16 @@ class URLCredentialsLoaderTest {
             }
         };
 
-        List<KubernetesConfigurationProperties.ManagedAccount> actual = loader.getCredentialsDefinitions();
+        List<KubernetesAccountProperties.ManagedAccount> actual = loader.getCredentialsDefinitions();
         assertEquals(2, actual.size());
     }
 
     @Test
     public void testLoadYamSingleFile() {
-        URLCredentialsLoader<KubernetesConfigurationProperties.ManagedAccount> loader = new URLCredentialsLoader<>(
+        URLCredentialsLoader<KubernetesAccountProperties.ManagedAccount> loader = new URLCredentialsLoader<>(
                 null,
                 EAPConfigurationProperties.FileFormat.YAML,
-                KubernetesConfigurationProperties.ManagedAccount.class,
+                KubernetesAccountProperties.ManagedAccount.class,
                 secretManager) {
             @Override
             protected InputStream getInputStream() {
@@ -123,16 +123,16 @@ class URLCredentialsLoaderTest {
             }
         };
 
-        List<KubernetesConfigurationProperties.ManagedAccount> actual = loader.getCredentialsDefinitions();
+        List<KubernetesAccountProperties.ManagedAccount> actual = loader.getCredentialsDefinitions();
         assertEquals(1, actual.size());
     }
 
     @Test
     public void testLoadJsonSingleFile() {
-        URLCredentialsLoader<KubernetesConfigurationProperties.ManagedAccount> loader = new URLCredentialsLoader<>(
+        URLCredentialsLoader<KubernetesAccountProperties.ManagedAccount> loader = new URLCredentialsLoader<>(
                 null,
                 EAPConfigurationProperties.FileFormat.JSON,
-                KubernetesConfigurationProperties.ManagedAccount.class,
+                KubernetesAccountProperties.ManagedAccount.class,
                 secretManager) {
             @Override
             protected InputStream getInputStream() {
@@ -140,16 +140,16 @@ class URLCredentialsLoaderTest {
             }
         };
 
-        List<KubernetesConfigurationProperties.ManagedAccount> actual = loader.getCredentialsDefinitions();
+        List<KubernetesAccountProperties.ManagedAccount> actual = loader.getCredentialsDefinitions();
         assertEquals(1, actual.size());
     }
 
     @Test
     public void testReplaceEnvVars() {
-        URLCredentialsLoader<KubernetesConfigurationProperties.ManagedAccount> loader = new URLCredentialsLoader<>(
+        URLCredentialsLoader<KubernetesAccountProperties.ManagedAccount> loader = new URLCredentialsLoader<>(
                 null,
                 EAPConfigurationProperties.FileFormat.YAML,
-                KubernetesConfigurationProperties.ManagedAccount.class,
+                KubernetesAccountProperties.ManagedAccount.class,
                 secretManager) {
             @Override
             protected InputStream getInputStream() {
@@ -157,16 +157,16 @@ class URLCredentialsLoaderTest {
             }
         };
 
-        List<KubernetesConfigurationProperties.ManagedAccount> actual = loader.getCredentialsDefinitions();
+        List<KubernetesAccountProperties.ManagedAccount> actual = loader.getCredentialsDefinitions();
         assertEquals(System.getenv("HOME"), actual.get(0).getName());
     }
 
     @Test
     public void testReplaceNotDefinedEnvVars() {
-        URLCredentialsLoader<KubernetesConfigurationProperties.ManagedAccount> loader = new URLCredentialsLoader<>(
+        URLCredentialsLoader<KubernetesAccountProperties.ManagedAccount> loader = new URLCredentialsLoader<>(
                 null,
                 EAPConfigurationProperties.FileFormat.YAML,
-                KubernetesConfigurationProperties.ManagedAccount.class,
+                KubernetesAccountProperties.ManagedAccount.class,
                 secretManager) {
             @Override
             protected InputStream getInputStream() {
@@ -174,7 +174,7 @@ class URLCredentialsLoaderTest {
             }
         };
 
-        List<KubernetesConfigurationProperties.ManagedAccount> actual = loader.getCredentialsDefinitions();
+        List<KubernetesAccountProperties.ManagedAccount> actual = loader.getCredentialsDefinitions();
         assertEquals("${UNKNOWN}", actual.get(0).getName());
     }
 
