@@ -19,7 +19,7 @@ package io.armory.plugin.eap.config;
 import com.netflix.spinnaker.clouddriver.aws.security.config.CredentialsConfig;
 import com.netflix.spinnaker.clouddriver.cloudfoundry.config.CloudFoundryConfigurationProperties;
 import com.netflix.spinnaker.clouddriver.ecs.security.ECSCredentialsConfig;
-import com.netflix.spinnaker.clouddriver.kubernetes.config.KubernetesConfigurationProperties;
+import com.netflix.spinnaker.clouddriver.kubernetes.config.KubernetesAccountProperties;
 import com.netflix.spinnaker.credentials.definition.CredentialsDefinitionSource;
 import com.netflix.spinnaker.kork.plugins.api.spring.ExposeToApp;
 import com.netflix.spinnaker.kork.secrets.SecretManager;
@@ -36,18 +36,18 @@ public class EAPConfiguration {
 
     @Bean
     @ExposeToApp
-    public CredentialsDefinitionSource<KubernetesConfigurationProperties.ManagedAccount>
+    public CredentialsDefinitionSource<KubernetesAccountProperties.ManagedAccount>
     kubernetesCredentialSource(EAPConfigurationProperties configProperties, SecretManager secretManager) {
         if (configProperties.getDir() != null) {
             return new DirectoryCredentialsLoader<>(
                     configProperties.getDir(),
-                    KubernetesConfigurationProperties.ManagedAccount.class,
+                    KubernetesAccountProperties.ManagedAccount.class,
                     secretManager,
                     configProperties.getFilePrefix().getDefault(),
                     configProperties.getFilePrefix().getKubernetes());
         } else {
             return new URLCredentialsLoader<>(configProperties.getUrl(), configProperties.getUrlContentFormat(),
-                    KubernetesConfigurationProperties.ManagedAccount.class, secretManager);
+                    KubernetesAccountProperties.ManagedAccount.class, secretManager);
         }
     }
 

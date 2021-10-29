@@ -1,12 +1,12 @@
 cloudfoundry:
   accounts:
-    - name: cf
+    - name: cf1
       password: supersecret
       user: user
       skipSslValidation: false
       api: mydomain.com
       appsManagerUri: https://mydomain.com
-    - name: cf
+    - name: cf2
       password: supersecret
       user: user
       skipSslValidation: false

@@ -1,7 +1,7 @@
 package io.armory.plugin.eap.config;
 
 
-import com.netflix.spinnaker.clouddriver.kubernetes.config.KubernetesConfigurationProperties;
+import com.netflix.spinnaker.clouddriver.kubernetes.config.KubernetesAccountProperties;
 import com.netflix.spinnaker.credentials.definition.CredentialsDefinitionSource;
 import com.netflix.spinnaker.kork.secrets.SecretManager;
 import io.armory.plugin.eap.EAPConfigurationProperties;
@@ -33,7 +33,7 @@ class EAPConfigurationTest {
         config.setUrlContentFormat(EAPConfigurationProperties.FileFormat.JSON);
         config.init();
 
-        CredentialsDefinitionSource<KubernetesConfigurationProperties.ManagedAccount> source =
+        CredentialsDefinitionSource<KubernetesAccountProperties.ManagedAccount> source =
                 new EAPConfiguration().kubernetesCredentialSource(config, secretManager);
 
         assertTrue(source instanceof URLCredentialsLoader, "Expected URLCredentialsLoader to be created for a given URL config");
@@ -45,7 +45,7 @@ class EAPConfigurationTest {
         config.setDir("/tmp");
         config.init();
 
-        CredentialsDefinitionSource<KubernetesConfigurationProperties.ManagedAccount> source =
+        CredentialsDefinitionSource<KubernetesAccountProperties.ManagedAccount> source =
                 new EAPConfiguration().kubernetesCredentialSource(config, secretManager);
 
         assertTrue(source instanceof DirectoryCredentialsLoader, "Expected DirectoryCredentialsLoader to be created for a given directory path");

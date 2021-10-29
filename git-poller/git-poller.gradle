@@ -16,7 +16,7 @@ dependencies {
     compileOnly(group: 'org.eclipse.jgit', name: 'org.eclipse.jgit', version: '5.7.0.202003110725-r')
     compileOnly(group: 'org.projectlombok', name: 'lombok', version: '1.18.12')
     compileOnly(group: 'org.slf4j', name: 'slf4j-api', version: '1.7.30')
-    compileOnly(group: 'org.springframework', name: 'spring-core', version: '5.2.4.RELEASE')
+    compileOnly(group: 'org.springframework', name: 'spring-core', version: '5.2.9.RELEASE')
     compileOnly(group: 'org.springframework.boot', name: 'spring-boot', version: '2.2.5.RELEASE')
     compileOnly(group: 'org.springframework.boot', name: 'spring-boot-autoconfigure', version: '2.2.5.RELEASE')
     compileOnly(group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '2.11.2')

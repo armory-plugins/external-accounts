@@ -25,7 +25,7 @@ import com.google.common.collect.ImmutableMap;
 import com.netflix.spinnaker.clouddriver.aws.security.config.CredentialsConfig;
 import com.netflix.spinnaker.clouddriver.cloudfoundry.config.CloudFoundryConfigurationProperties;
 import com.netflix.spinnaker.clouddriver.ecs.security.ECSCredentialsConfig;
-import com.netflix.spinnaker.clouddriver.kubernetes.config.KubernetesConfigurationProperties;
+import com.netflix.spinnaker.clouddriver.kubernetes.config.KubernetesAccountProperties;
 import com.netflix.spinnaker.credentials.definition.CredentialsDefinition;
 import com.netflix.spinnaker.credentials.definition.CredentialsDefinitionSource;
 import com.netflix.spinnaker.kork.secrets.SecretManager;
@@ -50,7 +50,7 @@ import java.util.regex.Pattern;
 public class URLCredentialsLoader<T extends CredentialsDefinition> implements CredentialsDefinitionSource<T> {
 
     private static final Map<Class<? extends CredentialsDefinition>, String> PROVIDER_NAME_BY_CLASS = ImmutableMap.of(
-            KubernetesConfigurationProperties.ManagedAccount.class, "kubernetes",
+            KubernetesAccountProperties.ManagedAccount.class, "kubernetes",
             CloudFoundryConfigurationProperties.ManagedAccount.class, "cloudfoundry",
             CredentialsConfig.Account.class, "aws",
             ECSCredentialsConfig.Account.class, "ecs"

@@ -21,17 +21,19 @@ dependencies {
 
     compileOnly(group: 'org.codehaus.groovy', name: 'groovy', version: '2.5.11')
     compileOnly(group: 'org.pf4j', name: 'pf4j', version: "${pf4jVersion}")
-    compileOnly(group: 'io.spinnaker.kork', name: 'kork-plugins', version: "${korkVersion}")
-    compileOnly(group: 'io.spinnaker.kork', name: 'kork-plugins-spring-api', version: "${korkVersion}")
-    compileOnly(group: 'io.spinnaker.kork', name: 'kork-credentials-api', version: "${korkVersion}")
-    compileOnly(group: 'io.spinnaker.kork', name: 'kork-secrets', version: "${korkVersion}")
-    compileOnly(group: 'io.spinnaker.clouddriver', name: 'clouddriver-api', version: "${clouddriverVersion}")
-    compileOnly(group: 'io.spinnaker.clouddriver', name: 'clouddriver-core', version: "${clouddriverVersion}")
-    compileOnly(group: 'io.spinnaker.clouddriver', name: 'clouddriver-security', version: "${clouddriverVersion}")
-    compileOnly(group: 'io.spinnaker.clouddriver', name: 'clouddriver-kubernetes', version: "${clouddriverVersion}")
-    compileOnly(group: 'io.spinnaker.clouddriver', name: 'clouddriver-cloudfoundry', version: "${clouddriverVersion}")
-    compileOnly(group: 'io.spinnaker.clouddriver', name: 'clouddriver-aws', version: "${clouddriverVersion}")
-    compileOnly(group: 'io.spinnaker.clouddriver', name: 'clouddriver-ecs', version: "${clouddriverVersion}")
+    compileOnly(enforcedPlatform("io.spinnaker.kork:kork-bom:${korkVersion}"))
+    compileOnly(enforcedPlatform("io.spinnaker.clouddriver:clouddriver-bom:${clouddriverVersion}"))
+    compileOnly(group: 'io.spinnaker.kork', name: 'kork-plugins')
+    compileOnly(group: 'io.spinnaker.kork', name: 'kork-plugins-spring-api')
+    compileOnly(group: 'io.spinnaker.kork', name: 'kork-credentials-api')
+    compileOnly(group: 'io.spinnaker.kork', name: 'kork-secrets')
+    compileOnly(group: 'io.spinnaker.clouddriver', name: 'clouddriver-api')
+    compileOnly(group: 'io.spinnaker.clouddriver', name: 'clouddriver-core')
+    compileOnly(group: 'io.spinnaker.clouddriver', name: 'clouddriver-security')
+    compileOnly(group: 'io.spinnaker.clouddriver', name: 'clouddriver-kubernetes')
+    compileOnly(group: 'io.spinnaker.clouddriver', name: 'clouddriver-cloudfoundry')
+    compileOnly(group: 'io.spinnaker.clouddriver', name: 'clouddriver-aws')
+    compileOnly(group: 'io.spinnaker.clouddriver', name: 'clouddriver-ecs')
     compileOnly(group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.11.2')
     compileOnly(group: 'org.projectlombok', name: 'lombok', version: '1.18.12')
     compileOnly(group: 'com.google.guava', name: 'guava', version: '28.2-jre')
@@ -41,19 +43,21 @@ dependencies {
 
     implementation(group: 'commons-io', name: 'commons-io', version: '2.6')
 
+    testImplementation(enforcedPlatform("io.spinnaker.kork:kork-bom:${korkVersion}"))
+    testImplementation(enforcedPlatform("io.spinnaker.clouddriver:clouddriver-bom:${clouddriverVersion}"))
     testImplementation "org.junit.jupiter:junit-jupiter-api:5.6.3"
     testImplementation "org.junit.vintage:junit-vintage-engine:5.5.3"
     testImplementation "org.junit.jupiter:junit-jupiter-params:5.6.3"
     testImplementation "org.junit.platform:junit-platform-runner:1.6.2"
     testImplementation "org.mockito:mockito-all:1.10.9"
     testImplementation(group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.10.2')
-    testImplementation(group: 'io.spinnaker.kork', name: 'kork-secrets', version: "${korkVersion}")
-    testImplementation(group: 'io.spinnaker.kork', name: 'kork-credentials-api', version: "${korkVersion}")
+    testImplementation(group: 'io.spinnaker.kork', name: 'kork-secrets')
+    testImplementation(group: 'io.spinnaker.kork', name: 'kork-credentials-api')
     testImplementation(group: 'com.google.guava', name: 'guava', version: '28.2-jre')
-    testImplementation(group: 'io.spinnaker.clouddriver', name: 'clouddriver-kubernetes', version: "${clouddriverVersion}")
-    testImplementation(group: 'io.spinnaker.clouddriver', name: 'clouddriver-cloudfoundry', version: "${clouddriverVersion}")
-    testImplementation(group: 'io.spinnaker.clouddriver', name: 'clouddriver-aws', version: "${clouddriverVersion}")
-    testImplementation(group: 'io.spinnaker.clouddriver', name: 'clouddriver-ecs', version: "${clouddriverVersion}")
+    testImplementation(group: 'io.spinnaker.clouddriver', name: 'clouddriver-kubernetes')
+    testImplementation(group: 'io.spinnaker.clouddriver', name: 'clouddriver-cloudfoundry')
+    testImplementation(group: 'io.spinnaker.clouddriver', name: 'clouddriver-aws')
+    testImplementation(group: 'io.spinnaker.clouddriver', name: 'clouddriver-ecs')
 }
 
 tasks.withType(Test) {
