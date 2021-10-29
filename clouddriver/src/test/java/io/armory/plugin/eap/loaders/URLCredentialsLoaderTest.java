@@ -16,6 +16,7 @@
 
 package io.armory.plugin.eap.loaders;
 
+import com.netflix.spinnaker.clouddriver.cloudfoundry.config.CloudFoundryConfigurationProperties;
 import com.netflix.spinnaker.clouddriver.kubernetes.config.KubernetesAccountProperties;
 import com.netflix.spinnaker.kork.secrets.SecretManager;
 import io.armory.plugin.eap.EAPConfigurationProperties;
@@ -27,6 +28,7 @@ import java.io.InputStream;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -176,6 +178,50 @@ class URLCredentialsLoaderTest {
 
         List<KubernetesAccountProperties.ManagedAccount> actual = loader.getCredentialsDefinitions();
         assertEquals("${UNKNOWN}", actual.get(0).getName());
+    }
+
+    @Test
+    public void testCloudDriverAccounts() {
+        URLCredentialsLoader<KubernetesAccountProperties.ManagedAccount> cdl = new URLCredentialsLoader<>(
+                null,
+                EAPConfigurationProperties.FileFormat.YAML,
+                KubernetesAccountProperties.ManagedAccount.class,
+                secretManager) {
+            @Override
+            protected InputStream getInputStream() {
+                return URLCredentialsLoaderTest.class.getResourceAsStream("/clouddriver-mixed.yml");
+            }
+        };
+        List<KubernetesAccountProperties.ManagedAccount> cda = cdl.getCredentialsDefinitions();
+        assertTrue(cda.size() == 1 && "kube".equals(cda.get(0).getName()));
+    }
+
+    @Test
+    public void testCloudFoundryAccounts() {
+        URLCredentialsLoader<CloudFoundryConfigurationProperties.ManagedAccount> cfl = new URLCredentialsLoader<>(
+                null,
+                EAPConfigurationProperties.FileFormat.YAML,
+                CloudFoundryConfigurationProperties.ManagedAccount.class,
+                secretManager) {
+            @Override
+            protected InputStream getInputStream() {
+                return URLCredentialsLoaderTest.class.getResourceAsStream("/cf-multiple.yml");
+            }
+        };
+        List<CloudFoundryConfigurationProperties.ManagedAccount> cfa = cfl.getCredentialsDefinitions();
+        assertTrue(cfa.size() == 2 && "cf".equals(cfa.get(0).getName()) && "cf".equals(cfa.get(1).getName()));
+        cfl = new URLCredentialsLoader<>(
+                null,
+                EAPConfigurationProperties.FileFormat.YAML,
+                CloudFoundryConfigurationProperties.ManagedAccount.class,
+                secretManager) {
+            @Override
+            protected InputStream getInputStream() {
+                return URLCredentialsLoaderTest.class.getResourceAsStream("/clouddriver-mixed.yml");
+            }
+        };
+        cfa = cfl.getCredentialsDefinitions();
+        assertTrue(cfa.size() == 1 && "cf".equals(cfa.get(0).getName()));
     }
 
 }
