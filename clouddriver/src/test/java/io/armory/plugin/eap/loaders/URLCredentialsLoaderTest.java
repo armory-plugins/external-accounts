@@ -181,7 +181,7 @@ class URLCredentialsLoaderTest {
     }
 
     @Test
-    public void testCloudDriverAccounts() {
+    public void testMixedProviderAccounts() {
         URLCredentialsLoader<KubernetesAccountProperties.ManagedAccount> cdl = new URLCredentialsLoader<>(
                 null,
                 EAPConfigurationProperties.FileFormat.YAML,
@@ -194,6 +194,18 @@ class URLCredentialsLoaderTest {
         };
         List<KubernetesAccountProperties.ManagedAccount> cda = cdl.getCredentialsDefinitions();
         assertTrue(cda.size() == 1 && "kube".equals(cda.get(0).getName()));
+        URLCredentialsLoader<CloudFoundryConfigurationProperties.ManagedAccount> cfl = new URLCredentialsLoader<>(
+                null,
+                EAPConfigurationProperties.FileFormat.YAML,
+                CloudFoundryConfigurationProperties.ManagedAccount.class,
+                secretManager) {
+            @Override
+            protected InputStream getInputStream() {
+                return URLCredentialsLoaderTest.class.getResourceAsStream("/clouddriver-mixed.yml");
+            }
+        };
+        List<CloudFoundryConfigurationProperties.ManagedAccount> cfa = cfl.getCredentialsDefinitions();
+        assertTrue(cfa.size() == 1 && "cf".equals(cfa.get(0).getName()));
     }
 
     @Test
@@ -208,20 +220,10 @@ class URLCredentialsLoaderTest {
                 return URLCredentialsLoaderTest.class.getResourceAsStream("/cf-multiple.yml");
             }
         };
-        List<CloudFoundryConfigurationProperties.ManagedAccount> cfa = cfl.getCredentialsDefinitions();
-        assertTrue(cfa.size() == 2 && "cf".equals(cfa.get(0).getName()) && "cf".equals(cfa.get(1).getName()));
-        cfl = new URLCredentialsLoader<>(
-                null,
-                EAPConfigurationProperties.FileFormat.YAML,
-                CloudFoundryConfigurationProperties.ManagedAccount.class,
-                secretManager) {
-            @Override
-            protected InputStream getInputStream() {
-                return URLCredentialsLoaderTest.class.getResourceAsStream("/clouddriver-mixed.yml");
-            }
-        };
-        cfa = cfl.getCredentialsDefinitions();
-        assertTrue(cfa.size() == 1 && "cf".equals(cfa.get(0).getName()));
+        List<CloudFoundryConfigurationProperties.ManagedAccount> cas = cfl.getCredentialsDefinitions();
+        assertTrue(cas.size() == 2 &&
+                cas.stream().anyMatch(ca -> "cf1".equals(ca.getName())) &&
+                cas.stream().anyMatch(ca -> "cf2".equals(ca.getName())));
     }
 
 }
