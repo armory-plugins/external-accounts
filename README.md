@@ -32,6 +32,11 @@ Any sidecar can populate the accounts directory by pulling information from othe
 |1.23 |Kubernetes and cloudfoundry implemented|
 |1.24 |AWS and ECS implemented|
 
+|Spinnaker version|Plugin version|
+|----|-----------|
+|< 1.27|0.1.x|
+| \>= 1.27|0.2.x|
+
 NOTE: The plugin is not actively tested in all compatible versions with all variants, but is expected to work in the above.
 
 
