@@ -40,10 +40,24 @@
         "requires": "clouddriver>=0.0.0",
         "sha512sum": "7e35825d8c87b739eeb90c61408a147085ac60735a22c0f484f79de480ad110206bb89f16529eebe5257c4f78ac1cac26da420e84d5512631ee582677968b20c",
         "preferred": false,
-        "compatibility": [
-
-        ],
+        "compatibility": [],
         "url": "https://github.com/armory-plugins/external-accounts/releases/download/v0.1.2/eap-0.1.2.zip"
+      }
+    ]
+  },
+  {
+    "id": "Armory.EAP",
+    "description": "Dynamically load accounts from different sources",
+    "provider": "https://armory.io",
+    "releases": [
+      {
+        "version": "0.2.0",
+        "date": "2021-11-01T17:28:30.007231Z",
+        "requires": "clouddriver>=0.0.0",
+        "sha512sum": "ba79a4a7619d4d2b9d3d5a1539b3c75803260a512f080e030956f8afaf724edf7762ad41fb2fbec1d5639037890e712683a7089fe8a444d0c28492350b96f821",
+        "preferred": false,
+        "compatibility": [],
+        "url": "https://github.com/armory-plugins/external-accounts/releases/download/v0.2.0/eap-0.2.0.zip"
       }
     ]
   }
