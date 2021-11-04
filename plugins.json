@@ -11,14 +11,7 @@
         "sha512sum": "594ab1712264d1b41490932ea78ffd4025ab4353d14c7efb39083a21b5857629e2b7674ca79dabda32def081e79785c0b4c1304b0a93bc994a17f6a13cf3cbe7",
         "preferred": false,
         "url": "https://github.com/armory-plugins/external-accounts/releases/download/v0.1.0/eap-0.1.0.zip"
-      }
-    ]
-  },
-  {
-    "id": "Armory.EAP",
-    "description": "Dynamically load accounts from different sources",
-    "provider": "https://armory.io",
-    "releases": [
+      },
       {
         "version": "0.1.1",
         "date": "2021-01-22T16:38:50.836569Z",
@@ -26,14 +19,7 @@
         "sha512sum": "a7baab9d3f3507ecbec0e63db8acc91df8764906b66682790139560386ec3e5cc948f8e8cd926069f549ab5d277497b971c53f1ec5dd447f0c694d8ce8202563",
         "preferred": false,
         "url": "file:///opt/spinnaker/lib/local-plugins/eap/0.1.1/eap-0.1.1.zip"
-      }
-    ]
-  },
-  {
-    "id": "Armory.EAP",
-    "description": "Dynamically load accounts from different sources",
-    "provider": "https://armory.io",
-    "releases": [
+      },
       {
         "version": "0.1.2",
         "date": "2021-07-28T19:00:28.427778Z",
@@ -42,14 +28,7 @@
         "preferred": false,
         "compatibility": [],
         "url": "https://github.com/armory-plugins/external-accounts/releases/download/v0.1.2/eap-0.1.2.zip"
-      }
-    ]
-  },
-  {
-    "id": "Armory.EAP",
-    "description": "Dynamically load accounts from different sources",
-    "provider": "https://armory.io",
-    "releases": [
+      },
       {
         "version": "0.2.0",
         "date": "2021-11-01T17:28:30.007231Z",

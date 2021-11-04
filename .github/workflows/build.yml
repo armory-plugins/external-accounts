@@ -134,10 +134,52 @@ jobs:
         id: add-release
         if: steps.build_type.outputs.version_type == 'release'
         run: |
-          export ENTRY=$(cat build/distributions/plugins-remote.json)
-          jq ". += ${ENTRY}" plugins.json > plugins.json.tmp
-          mv plugins.json.tmp plugins.json
-
+          set -eu
+          pi=Armory.EAP
+          prp=build/distributions/plugins-remote.json
+          pp=plugins.json
+          ptp=plugins.json.tmp
+          lpi=$(jq "[.[] | select(.id==\"${pi}\")] | length" ${pp})
+          if [ -z "${lpi}" ]
+          then
+              echo "[]" > ${pp}
+              lpi=0
+          fi
+          if [ ${lpi} == 0 ]
+          then
+              p=$(cat ${prp})
+              jq ". += ${p}" ${pp} > ${ptp}
+          else
+              if [ ${lpi} == 1 ]
+              then
+                  pii=$(jq "map(.id==\"${pi}\") | index(true)" ${pp})
+                  nr=$(jq "[.[] | select(.id==\"${pi}\").releases[0]]" ${prp})
+                  nrv=$(echo ${nr} | jq -r '.[] | .version')
+                  if [ -z "${nrv}" ] || [ ${nrv} == "null" ]
+                  then
+                      echo "Release version not found for the plugin id ${pi} inside ${prp}"
+                      exit -1
+                  else
+                      lrs=$(jq "[.[] | select(.id==\"${pi}\").releases | .[] | select(.version==\"${nrv}\")] | length" ${pp})
+                      if [ ${lrs} -ne 0 ]
+                      then
+                          rvi=$(jq ".[] | select(.id==\"${pi}\").releases | map(.version==\"${nrv}\") | index(true)" ${pp})
+                          ren='^[0-9]+$'
+                          while [[ ${rvi} =~ $ren ]] && [ ${rvi} -gt -1 ]
+                          do
+                              jq "del(.[${pii}].releases[${rvi}])" ${pp} > ${ptp}
+                              mv ${ptp} ${pp}
+                              rvi=$(jq ".[] | select(.id==\"${pi}\").releases | map(.version==\"${nrv}\") | index(true)" ${pp})
+                          done
+                      fi
+                      jq ".[${pii}].releases += ${nr}" ${pp} > ${ptp}
+                  fi
+              else
+                  echo "The ${pp} file must contain 0 or 1 plugin with the id ${pi}, but found ${lpi}"
+                  exit ${lpi}
+              fi
+          fi
+          mv ${ptp} ${pp}
       - name: Commit plugins.json
         uses: stefanzweifel/git-auto-commit-action@v4
         if: steps.build_type.outputs.version_type == 'release'
