@@ -24,6 +24,14 @@ import java.util.Collections;
 import java.util.List;
 
 public class EAPPlugin extends SpringLoaderPlugin {
+
+    private static final String ARMORY_EAP_SPRING_LOADER_BEAN_NAME = "Armory.EAP.com.netflix.spinnaker.kork.plugins.api.spring.SpringLoader";
+    private static final String KUBERNETES_CONFIGURATION_BEAN_NAME = "kubernetesConfiguration";
+    private static final String CLOUDFOUNDRY_CONFIGURATION_BEAN_NAME = "cloudFoundryConfiguration";
+    private static final String AWS_CONFIGURATION_BEAN_NAME = "awsConfiguration";
+    private static final String ECS_CONFIGURATION_BEAN_NAME = "ecsConfiguration";
+    private static final String DOCKER_REGISTRY_CONFIGURATION_BEAN_NAME = "dockerRegistryConfiguration";
+
     /**
      * Constructor to be used by plugin manager for plugin instantiation. Your plugins have to provide
      * constructor with this exact signature to be successfully loaded by manager.
@@ -52,7 +60,25 @@ public class EAPPlugin extends SpringLoaderPlugin {
     @Override
     public void registerBeanDefinitions(BeanDefinitionRegistry registry) {
         super.registerBeanDefinitions(registry);
-        registry.getBeanDefinition("cloudDriverConfig").
-                setDependsOn("Armory.EAP.com.netflix.spinnaker.kork.plugins.api.spring.SpringLoader");
+        if (registry.containsBeanDefinition(KUBERNETES_CONFIGURATION_BEAN_NAME)) {
+            registry.getBeanDefinition(KUBERNETES_CONFIGURATION_BEAN_NAME)
+                    .setDependsOn(ARMORY_EAP_SPRING_LOADER_BEAN_NAME);
+        }
+        if (registry.containsBeanDefinition(CLOUDFOUNDRY_CONFIGURATION_BEAN_NAME)) {
+            registry.getBeanDefinition(CLOUDFOUNDRY_CONFIGURATION_BEAN_NAME)
+                    .setDependsOn(ARMORY_EAP_SPRING_LOADER_BEAN_NAME);
+        }
+        if (registry.containsBeanDefinition(AWS_CONFIGURATION_BEAN_NAME)) {
+            registry.getBeanDefinition(AWS_CONFIGURATION_BEAN_NAME)
+                    .setDependsOn(ARMORY_EAP_SPRING_LOADER_BEAN_NAME);
+        }
+        if (registry.containsBeanDefinition(ECS_CONFIGURATION_BEAN_NAME)) {
+            registry.getBeanDefinition(ECS_CONFIGURATION_BEAN_NAME)
+                    .setDependsOn(ARMORY_EAP_SPRING_LOADER_BEAN_NAME);
+        }
+        if (registry.containsBeanDefinition(DOCKER_REGISTRY_CONFIGURATION_BEAN_NAME)) {
+            registry.getBeanDefinition(DOCKER_REGISTRY_CONFIGURATION_BEAN_NAME)
+                    .setDependsOn(ARMORY_EAP_SPRING_LOADER_BEAN_NAME);
+        }
     }
 }

@@ -40,6 +40,7 @@ public class EAPConfigurationProperties {
         private String cloudfoundry = "cf";
         private String aws = "aws";
         private String ecs = "ecs";
+        private String dockerRegistry = "docker";
 
         @JsonProperty("default")
         public String getDefault() {

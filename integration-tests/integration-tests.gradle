@@ -24,28 +24,28 @@ dependencies {
   }
 
   integrationImplementation "org.springframework.boot:spring-boot-starter-test:2.2.5.RELEASE"
-  integrationImplementation "org.testcontainers:testcontainers:1.15.0"
-  integrationImplementation "org.testcontainers:mysql:1.15.0"
-  integrationImplementation "org.testcontainers:junit-jupiter:1.15.0"
+  integrationImplementation "org.testcontainers:testcontainers:1.16.2"
+  integrationImplementation "org.testcontainers:mysql:1.16.2"
+  integrationImplementation "org.testcontainers:junit-jupiter:1.16.2"
   integrationImplementation "com.google.code.gson:gson:2.8.6"
   integrationImplementation("com.fasterxml.jackson.core:jackson-core") {
     version {
-      strictly '2.11.1'
+      strictly '2.12.3'
     }
   }
   integrationImplementation("com.fasterxml.jackson.core:jackson-annotations") {
     version {
-      strictly '2.11.1'
+      strictly '2.12.3'
     }
   }
   integrationImplementation("com.fasterxml.jackson.core:jackson-databind") {
     version {
-      strictly '2.11.1'
+      strictly '2.12.3'
     }
   }
   integrationImplementation("com.fasterxml.jackson.module:jackson-module-kotlin") {
     version {
-      strictly '2.11.1'
+      strictly '2.12.3'
     }
   }
   integrationImplementation "com.google.guava:guava:28.2-jre"

@@ -5,9 +5,6 @@ buildscript {
     repositories {
         maven { url "https://plugins.gradle.org/m2/" }
     }
-    dependencies {
-        classpath "org.junit.platform:junit-platform-gradle-plugin:${junitPlatformVersion}"
-    }
 }
 
 plugins {
@@ -75,7 +72,7 @@ task generatePluginsJson {
         def pluginInfo = new JsonSlurper().parse(pluginInfoFile)
 
         pluginInfo.releases[0].url = "file:///opt/spinnaker/lib/local-plugins/eap/${version}/eap-${version}.zip"
-        def plugins = [ pluginInfo ]
+        def plugins = [pluginInfo]
         File dockerPlugins = new File("$buildDir/distributions/plugins-docker.json")
         dockerPlugins.write(JsonOutput.prettyPrint(JsonOutput.toJson(plugins)))
 

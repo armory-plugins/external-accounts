@@ -1,6 +1,7 @@
 package io.armory.plugin.eap.config;
 
 
+import com.netflix.spinnaker.clouddriver.docker.registry.config.DockerRegistryConfigurationProperties;
 import com.netflix.spinnaker.clouddriver.kubernetes.config.KubernetesAccountProperties;
 import com.netflix.spinnaker.credentials.definition.CredentialsDefinitionSource;
 import com.netflix.spinnaker.kork.secrets.SecretManager;
@@ -40,6 +41,19 @@ class EAPConfigurationTest {
     }
 
     @Test
+    public void shouldCreateURLLoaderWithDockerRegistrySource() throws MalformedURLException {
+        EAPConfigurationProperties config = new EAPConfigurationProperties();
+        config.setUrl(new URL("https://myserver.com"));
+        config.setUrlContentFormat(EAPConfigurationProperties.FileFormat.YAML);
+        config.init();
+
+        CredentialsDefinitionSource<DockerRegistryConfigurationProperties.ManagedAccount> source =
+                new EAPConfiguration().dockerRegistryCredentialsSource(config, secretManager);
+
+        assertTrue(source instanceof URLCredentialsLoader, "Expected URLCredentialsLoader to be created for a given URL config");
+    }
+
+    @Test
     public void shouldCreateDirLoader() {
         EAPConfigurationProperties config = new EAPConfigurationProperties();
         config.setDir("/tmp");
@@ -47,6 +61,18 @@ class EAPConfigurationTest {
 
         CredentialsDefinitionSource<KubernetesAccountProperties.ManagedAccount> source =
                 new EAPConfiguration().kubernetesCredentialSource(config, secretManager);
+
+        assertTrue(source instanceof DirectoryCredentialsLoader, "Expected DirectoryCredentialsLoader to be created for a given directory path");
+    }
+
+    @Test
+    public void shouldCreateDirLoaderWithDockerRegistrySource() {
+        EAPConfigurationProperties config = new EAPConfigurationProperties();
+        config.setDir("/tmp");
+        config.init();
+
+        CredentialsDefinitionSource<DockerRegistryConfigurationProperties.ManagedAccount> source =
+                new EAPConfiguration().dockerRegistryCredentialsSource(config, secretManager);
 
         assertTrue(source instanceof DirectoryCredentialsLoader, "Expected DirectoryCredentialsLoader to be created for a given directory path");
     }
