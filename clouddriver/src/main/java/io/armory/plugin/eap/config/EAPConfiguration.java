@@ -16,8 +16,9 @@
 
 package io.armory.plugin.eap.config;
 
-import com.netflix.spinnaker.clouddriver.aws.security.config.CredentialsConfig;
+import com.netflix.spinnaker.clouddriver.aws.security.config.AccountsConfiguration;
 import com.netflix.spinnaker.clouddriver.cloudfoundry.config.CloudFoundryConfigurationProperties;
+import com.netflix.spinnaker.clouddriver.docker.registry.config.DockerRegistryConfigurationProperties;
 import com.netflix.spinnaker.clouddriver.ecs.security.ECSCredentialsConfig;
 import com.netflix.spinnaker.clouddriver.kubernetes.config.KubernetesAccountProperties;
 import com.netflix.spinnaker.credentials.definition.CredentialsDefinitionSource;
@@ -70,19 +71,19 @@ public class EAPConfiguration {
 
     @Bean
     @ExposeToApp
-    public CredentialsDefinitionSource<CredentialsConfig.Account>
+    public CredentialsDefinitionSource<AccountsConfiguration.Account>
     amazonCredentialsSource(EAPConfigurationProperties configProperties, SecretManager secretManager) {
         if (configProperties.getDir() != null) {
             return new DirectoryCredentialsLoader<>(
                     configProperties.getDir(),
-                    CredentialsConfig.Account.class,
+                    AccountsConfiguration.Account.class,
                     secretManager,
                     configProperties.getFilePrefix().getDefault(),
                     configProperties.getFilePrefix().getAws());
-        } else {
-            return new URLCredentialsLoader<>(configProperties.getUrl(), configProperties.getUrlContentFormat(),
-                    CredentialsConfig.Account.class, secretManager);
         }
+        return new URLCredentialsLoader<>(configProperties.getUrl(), configProperties.getUrlContentFormat(),
+                AccountsConfiguration.Account.class, secretManager);
+
     }
 
     @Bean
@@ -100,5 +101,21 @@ public class EAPConfiguration {
             return new URLCredentialsLoader<>(configProperties.getUrl(), configProperties.getUrlContentFormat(),
                     ECSCredentialsConfig.Account.class, secretManager);
         }
+    }
+
+    @Bean
+    @ExposeToApp
+    public CredentialsDefinitionSource<DockerRegistryConfigurationProperties.ManagedAccount>
+    dockerRegistryCredentialsSource(EAPConfigurationProperties configProperties, SecretManager secretManager) {
+        if (configProperties.getDir() != null) {
+            return new DirectoryCredentialsLoader<>(
+                    configProperties.getDir(),
+                    DockerRegistryConfigurationProperties.ManagedAccount.class,
+                    secretManager,
+                    configProperties.getFilePrefix().getDefault(),
+                    configProperties.getFilePrefix().getDockerRegistry());
+        }
+        return new URLCredentialsLoader<>(configProperties.getUrl(), configProperties.getUrlContentFormat(),
+                DockerRegistryConfigurationProperties.ManagedAccount.class, secretManager);
     }
 }

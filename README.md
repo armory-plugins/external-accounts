@@ -64,11 +64,12 @@ spec:
               cloudfoundry: cf       # (Optional, default: cf). All files with this prefix will be scanned for loading cloudfoundry accounts
               aws: aws               # (Optional, default: aws). All files with this prefix will be scanned for loading AWS accounts
               ecs: ecs               # (Optional, default: ecs). All files with this prefix will be scanned for loading ECS accounts
+              dockerRegistry: docker # (Optional, default: docker). All files with this prefix will be scanned for loading docker registry accounts
         credentials:
           poller:
             enabled: true
             types:
-              kubernetes:            # (Mandatory for each provider used: kubernetes, cloudfoundry, aws or ecs). Indicates how often account information should be read from the files
+              kubernetes:            # (Mandatory for each provider used: kubernetes, cloudfoundry, aws, ecs or dockerRegistry). Indicates how often account information should be read from the files
                 reloadFrequencyMs: 60000
         spinnaker:
           extensibility:
@@ -95,6 +96,8 @@ spec:
                     env:
                     - name: REPO
                       value: "git@github.com:myorg/myrepo.git"    # Git repository to clone
+                    - name: BRANCH
+                      value: "master"    # Git branch
                     - name: LOCAL_CLONE_DIR
                       value: "/tmp/accounts"                      # Should match the value in armory.eap.dir
                     - name: SYNC_INTERVAL_SECS
@@ -125,14 +128,15 @@ spec:
 
 Available environment variables for git poller sidecar
 
-|Name|Description|Default|
-|----|-----------|----------|
-|REPO |Git repository to clone|-|
-|LOCAL_CLONE_DIR |Path in local file system to clone the repo |Automatically generated dir int /tmp|
-|SYNC_INTERVAL_SECS |How often to call "git pull" in seconds|60|
-|GIT_USER |Username for git authentication |-|
-|GIT_PASS |Password for git authentication |-|
-|TOKEN |Personal access token to use for authentication|-|
+| Name               | Description                                     | Default                              |
+|--------------------|-------------------------------------------------|--------------------------------------|
+| REPO               | Git repository to clone                         | -                                    |
+| BRANCH             | Git branch                                      | master                               |
+| LOCAL_CLONE_DIR    | Path in local file system to clone the repo     | Automatically generated dir int /tmp |
+| SYNC_INTERVAL_SECS | How often to call "git pull" in seconds         | 60                                   |
+| GIT_USER           | Username for git authentication                 | -                                    |
+| GIT_PASS           | Password for git authentication                 | -                                    |
+| TOKEN              | Personal access token to use for authentication | -                                    |
 
 If authenticating to git using SSH, a secret with all relevant files (`id_rsa`, `known_hosts`) needs to be provided.
 
@@ -173,11 +177,12 @@ spec:
               cloudfoundry: cf       # (Optional, default: cf). All files with this prefix will be scanned for loading cloudfoundry accounts
               aws: aws               # (Optional, default: aws). All files with this prefix will be scanned for loading AWS accounts
               ecs: ecs               # (Optional, default: ecs). All files with this prefix will be scanned for loading ECS accounts
+              dockerRegistry: docker # (Optional, default: docker). All files with this prefix will be scanned for loading docker registry accounts
         credentials:
           poller:
             enabled: true
             types:
-              kubernetes:             # (Mandatory for each provider used: kubernetes, cloudfoundry, aws or ecs). Indicates how often account information should be read from the files
+              kubernetes:             # (Mandatory for each provider used: kubernetes, cloudfoundry, aws, ecs or dockerRegistry). Indicates how often account information should be read from the files
                 reloadFrequencyMs: 60000
         spinnaker:
           extensibility:
@@ -237,7 +242,7 @@ spec:
           poller:
             enabled: true
             types:
-              kubernetes:                           # (Mandatory for each provider used: kubernetes, cloudfoundry, aws or ecs). Indicates how often account information should be read 
+              kubernetes:                           # (Mandatory for each provider used: kubernetes, cloudfoundry, aws, ecs or dockerRegistry). Indicates how often account information should be read 
                 reloadFrequencyMs: 60000
         spinnaker:
           extensibility:

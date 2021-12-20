@@ -18,12 +18,17 @@ package io.armory.plugin.eap.loaders;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.*;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.deser.std.StringDeserializer;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.google.common.collect.ImmutableMap;
-import com.netflix.spinnaker.clouddriver.aws.security.config.CredentialsConfig;
+import com.netflix.spinnaker.clouddriver.aws.security.config.AccountsConfiguration;
 import com.netflix.spinnaker.clouddriver.cloudfoundry.config.CloudFoundryConfigurationProperties;
+import com.netflix.spinnaker.clouddriver.docker.registry.config.DockerRegistryConfigurationProperties;
 import com.netflix.spinnaker.clouddriver.ecs.security.ECSCredentialsConfig;
 import com.netflix.spinnaker.clouddriver.kubernetes.config.KubernetesAccountProperties;
 import com.netflix.spinnaker.credentials.definition.CredentialsDefinition;
@@ -36,10 +41,18 @@ import org.jetbrains.annotations.NotNull;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.SafeConstructor;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.net.URL;
 import java.nio.charset.Charset;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -52,8 +65,9 @@ public class URLCredentialsLoader<T extends CredentialsDefinition> implements Cr
     private static final Map<Class<? extends CredentialsDefinition>, String> PROVIDER_NAME_BY_CLASS = ImmutableMap.of(
             KubernetesAccountProperties.ManagedAccount.class, "kubernetes",
             CloudFoundryConfigurationProperties.ManagedAccount.class, "cloudfoundry",
-            CredentialsConfig.Account.class, "aws",
-            ECSCredentialsConfig.Account.class, "ecs"
+            AccountsConfiguration.Account.class, "aws",
+            ECSCredentialsConfig.Account.class, "ecs",
+            DockerRegistryConfigurationProperties.ManagedAccount.class, "dockerRegistry"
     );
     private static final String ACCOUNTS_KEY = "accounts";
     private static final Pattern ENV_VAR_PATTERN = Pattern.compile("^.*\\$\\{(.*)}.*$");

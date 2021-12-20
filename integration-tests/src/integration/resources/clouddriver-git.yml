@@ -19,11 +19,16 @@ credentials:
         reloadFrequencyMs: 5000
       cloudfoundry:
         reloadFrequencyMs: 5000
+      dockerRegistry:
+        reloadFrequencyMs: 5000
 
 kubernetes:
   enabled: true
 
 cloudfoundry:
+  enabled: true
+
+dockerRegistry:
   enabled: true
 
 spinnaker:

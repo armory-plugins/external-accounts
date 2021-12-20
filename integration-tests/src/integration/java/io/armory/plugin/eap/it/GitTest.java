@@ -49,7 +49,7 @@ public class GitTest {
 
     static {
         gitContainer.start();
-        String tmpDir = System.getProperty("java.io.tmpdir") + File.separator + UUID.randomUUID().toString();
+        String tmpDir = System.getProperty("java.io.tmpdir") + File.separator + UUID.randomUUID();
         System.setProperty("armory.external-accounts.dir", tmpDir);
         RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();
     }
@@ -106,6 +106,48 @@ public class GitTest {
             return credNames.size() == 2 && credNames.contains("kube-1") && credNames.contains("kube-2");
         }, ACCOUNTS_REGISTERED_TIMEOUT_SEC, TimeUnit.SECONDS, "Waited " + ACCOUNTS_REGISTERED_TIMEOUT_SEC +
                 " seconds for accounts \"kube-1\" and \"kube-2\" to show in /credentials endpoint");
+    }
+
+    @DisplayName(".\n===\n"
+            + "Given one dockerRegistry account in git\n"
+            + "  And git ssh authentication\n"
+            + "  And a new account file is added to git\n"
+            + "When sending GET /credentials request\n"
+            + "Then it should return two dockerRegistry accounts\n===")
+    @Test
+    public void shouldAddNewDockerRegistryAccount() throws IOException, InterruptedException {
+        // given
+        Map<String, Object> fileContents = TestUtils.loadYaml("test_files/docker-registry-single.yml")
+                .withValue("dockerRegistry.accounts[0].name", "docker-1")
+                .asMap();
+        gitContainer.addFileContentsToRepo(fileContents, "dockerRegistry", "docker-registry-single-1.yml");
+        TestUtils.repeatUntilTrue(() -> {
+            System.out.println("> GET /credentials");
+            Response response = given().get(baseUrl() + "/credentials");
+            response.prettyPrint();
+            JsonPath jsonPath = response.jsonPath();
+            List<String> credNames = jsonPath.getList("name");
+            return credNames.size() == 1 && credNames.contains("docker-1");
+        }, ACCOUNTS_REGISTERED_TIMEOUT_SEC, TimeUnit.SECONDS, "Waited " + ACCOUNTS_REGISTERED_TIMEOUT_SEC +
+                " seconds for account \"docker-1\" to show in /credentials endpoint");
+
+        fileContents = TestUtils.loadYaml("test_files/docker-registry-single.yml")
+                .withValue("dockerRegistry.accounts[0].name", "docker-2")
+                .asMap();
+        gitContainer.addFileContentsToRepo(fileContents, "dockerRegistry", "docker-registry-single-2.yml");
+
+        TestUtils.repeatUntilTrue(() -> {
+            // when
+            System.out.println("> GET /credentials");
+            Response response = given().get(baseUrl() + "/credentials");
+            response.prettyPrint();
+            JsonPath jsonPath = response.jsonPath();
+            List<String> credNames = jsonPath.getList("name");
+
+            // then
+            return credNames.size() == 2 && credNames.contains("docker-1") && credNames.contains("docker-2");
+        }, ACCOUNTS_REGISTERED_TIMEOUT_SEC, TimeUnit.SECONDS, "Waited " + ACCOUNTS_REGISTERED_TIMEOUT_SEC +
+                " seconds for accounts \"docker-1\" and \"docker-2\" to show in /credentials endpoint");
     }
 
 }
