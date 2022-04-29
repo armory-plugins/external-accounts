@@ -37,6 +37,15 @@
         "preferred": false,
         "compatibility": [],
         "url": "https://github.com/armory-plugins/external-accounts/releases/download/v0.2.0/eap-0.2.0.zip"
+      },
+      {
+        "version": "0.3.0",
+        "date": "2022-04-29T18:30:59.292120Z",
+        "requires": "clouddriver>=0.0.0",
+        "sha512sum": "26bccf74d1fa3dba4e69615145c1c03e62308e370624a7b9b6af28ed47517ac42fc66e10cac568a1505d3dc8c1347783b50b898837556e2fd5f8327caddab1e3",
+        "preferred": false,
+        "compatibility": [],
+        "url": "https://github.com/armory-plugins/external-accounts/releases/download/v0.3.0/eap-0.3.0.zip"
       }
     ]
   }
