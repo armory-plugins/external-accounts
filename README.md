@@ -27,15 +27,17 @@ Any sidecar can populate the accounts directory by pulling information from othe
 
 ### Spinnaker compatibility
 
-|Min. version|Notes|
-|----|-----------|
-|1.23 |Kubernetes and cloudfoundry implemented|
-|1.24 |AWS and ECS implemented|
+| Min. version | Notes                                   |
+|--------------|-----------------------------------------|
+| 1.23         | Kubernetes and cloudfoundry implemented |
+| 1.24         | AWS and ECS implemented                 |
+| 1.28         | Docker implemented                      |
 
-|Spinnaker version|Plugin version|
-|----|-----------|
-|< 1.27|0.1.x|
-| \>= 1.27|0.2.x|
+| Spinnaker version | Plugin version  |
+|-------------------|-----------------|
+| < 1.27            | 0.1.x           |
+| \>= 1.27          | 0.2.x           |
+| \>= 1.28          | 0.3.x           |
 
 NOTE: The plugin is not actively tested in all compatible versions with all variants, but is expected to work in the above.
 
@@ -69,7 +71,15 @@ spec:
           poller:
             enabled: true
             types:
-              kubernetes:            # (Mandatory for each provider used: kubernetes, cloudfoundry, aws, ecs or dockerRegistry). Indicates how often account information should be read from the files
+              kubernetes:                # (Mandatory if the provider is used). Indicates how often account information should be read from the files
+                reloadFrequencyMs: 60000
+              cloudfoundry:              # (Mandatory if the provider is used). Indicates how often account information should be read from the files
+                reloadFrequencyMs: 60000
+              aws:                       # (Mandatory if the provider is used). Indicates how often account information should be read from the files
+                reloadFrequencyMs: 60000
+              ecs:                       # (Mandatory if the provider is used). Indicates how often account information should be read from the files
+                reloadFrequencyMs: 60000
+              dockerRegistry:            # (Mandatory if the provider is used). Indicates how often account information should be read from the files
                 reloadFrequencyMs: 60000
         spinnaker:
           extensibility:
@@ -182,7 +192,15 @@ spec:
           poller:
             enabled: true
             types:
-              kubernetes:             # (Mandatory for each provider used: kubernetes, cloudfoundry, aws, ecs or dockerRegistry). Indicates how often account information should be read from the files
+              kubernetes:                # (Mandatory if the provider is used). Indicates how often account information should be read from the files
+                reloadFrequencyMs: 60000
+              cloudfoundry:              # (Mandatory if the provider is used). Indicates how often account information should be read from the files
+                reloadFrequencyMs: 60000
+              aws:                       # (Mandatory if the provider is used). Indicates how often account information should be read from the files
+                reloadFrequencyMs: 60000
+              ecs:                       # (Mandatory if the provider is used). Indicates how often account information should be read from the files
+                reloadFrequencyMs: 60000
+              dockerRegistry:            # (Mandatory if the provider is used). Indicates how often account information should be read from the files
                 reloadFrequencyMs: 60000
         spinnaker:
           extensibility:
@@ -242,7 +260,15 @@ spec:
           poller:
             enabled: true
             types:
-              kubernetes:                           # (Mandatory for each provider used: kubernetes, cloudfoundry, aws, ecs or dockerRegistry). Indicates how often account information should be read 
+              kubernetes:                # (Mandatory if the provider is used). Indicates how often account information should be read from the files
+                reloadFrequencyMs: 60000
+              cloudfoundry:              # (Mandatory if the provider is used). Indicates how often account information should be read from the files
+                reloadFrequencyMs: 60000
+              aws:                       # (Mandatory if the provider is used). Indicates how often account information should be read from the files
+                reloadFrequencyMs: 60000
+              ecs:                       # (Mandatory if the provider is used). Indicates how often account information should be read from the files
+                reloadFrequencyMs: 60000
+              dockerRegistry:            # (Mandatory if the provider is used). Indicates how often account information should be read from the files
                 reloadFrequencyMs: 60000
         spinnaker:
           extensibility:
