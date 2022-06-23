@@ -1,0 +1,82 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    name: Release Plugin
+    runs-on: ubuntu-latest
+    env:
+      ORG_GRADLE_PROJECT_artifactory_user: '${{secrets.ARTIFACTORY_USER}}'
+      ORG_GRADLE_PROJECT_artifactory_password: '${{secrets.ARTIFACTORY_TOKEN}}'
+    steps:
+      - name: checkout code
+        uses: actions/checkout@v2
+
+      - name: set up java
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+
+      - name: run tests
+        run: ./gradlew test
+
+      - name: build
+        run: |
+          ./gradlew releaseBundle
+          ls -l ./build/distributions
+        env:
+          VERSION_TYPE: release
+
+      - name: get project info
+        id: get_project_info
+        run: |
+          echo ::set-output name=PROJECT::$(basename `pwd`)
+          echo ::set-output name=PROJECT_KEBAB::$(basename `pwd` | sed 's/\([a-z0-9]\)\([A-Z]\)/\1_\L\2/g')
+          echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
+          echo ::set-output name=STRIPPED_VERSION::$(echo ${GITHUB_REF/refs\/tags\//} | sed 's/v//')
+          echo ::set-output name=REPO::${GITHUB_REPOSITORY}
+          echo ::set-output name=RELEASE_REPO::${GITHUB_REPOSITORY}-releases
+
+      - name: create release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          draft: false
+          prerelease: false
+
+      - name: rename build artifact
+        id: rename_build_artifact
+        run: |
+          if [ -e ./build/distributions/${{ steps.get_project_info.outputs.PROJECT }}-${{ steps.get_project_info.outputs.STRIPPED_VERSION }}.zip ]
+            then mv ./build/distributions/${{ steps.get_project_info.outputs.PROJECT }}-${{ steps.get_project_info.outputs.STRIPPED_VERSION }}.zip ./build/distributions/${{ steps.get_project_info.outputs.PROJECT }}-${{ steps.get_project_info.outputs.VERSION }}.zip
+          fi
+
+      - name: upload release asset
+        id: upload-release-asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./build/distributions/${{ steps.get_project_info.outputs.PROJECT }}-${{ steps.get_project_info.outputs.VERSION }}.zip
+          asset_name: ${{ steps.get_project_info.outputs.PROJECT }}-${{ steps.get_project_info.outputs.VERSION }}.zip
+          asset_content_type: application/zip
+
+      - name: add release to plugin repo
+        id: add-release
+        uses: armory-io/plugin-metadata-updater@master
+        env:
+          JAVA_HOME: ''
+          GITHUB_OAUTH: ${{ secrets.TOKEN }}
+        with:
+          metadata: build/distributions/plugin-info.json
+          binary_url: https://github.com/${{ steps.get_project_info.outputs.RELEASE_REPO }}/releases/download/${{ steps.get_project_info.outputs.VERSION }}/${{ steps.get_project_info.outputs.PROJECT }}-${{ steps.get_project_info.outputs.VERSION }}.zip
+          metadata_repo_url: https://github.com/armory-plugins/pluginRepository
