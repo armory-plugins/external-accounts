@@ -28,6 +28,11 @@ sourceSets {
     }
 }
 
+configurations {
+    integrationImplementation.extendsFrom testImplementation
+    integrationRuntime.extendsFrom testRuntime
+}
+
 dependencies {
     implementation project(":common")
     implementation project(":git-poller")
@@ -84,7 +89,8 @@ dependencies {
     testImplementation(group: 'org.mockito', name: 'mockito-core', version: '3.1.0')
     testImplementation(group: 'org.mockito', name: 'mockito-inline', version: '3.1.0')
     testImplementation(group: 'org.codehaus.groovy', name: 'groovy', version: '2.5.11')
-
+    testImplementation(group: 'com.netflix.frigga', name: 'frigga')
+    
     integrationImplementation("com.h2database:h2")
     integrationImplementation(group: 'io.strikt', name: 'strikt-core', version: '0.22.1')
     integrationImplementation(group: 'io.spinnaker.kork', name: 'kork-plugins')
