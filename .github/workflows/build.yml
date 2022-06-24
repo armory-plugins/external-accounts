@@ -111,15 +111,3 @@ jobs:
         run: |
           git tag v${{ steps.build_type.outputs.version }}
           git push origin v${{ steps.build_type.outputs.version }}
-
-      - name: Publish plugin to artifactory
-        if: steps.build_type.outputs.version_type == 'rc' || steps.build_type.outputs.version_type == 'release'
-        run: |
-          curl -H "Authorization: Bearer ${{ secrets.ARTIFACTORY_CURL_TOKEN }}" -X PUT "https://armory.jfrog.io/artifactory/plugins/appname/${{ steps.build_type.outputs.version }}/appNamePlugin-${{ steps.build_type.outputs.version }}.zip" -T build/distributions/appNamePlugin-${{ steps.build_type.outputs.version }}.zip
-          echo "======= plugins index file entry ========"
-          cat build/distributions/plugins-remote.json
-
-      - name: Publish plugin master index to artifactory
-        if: steps.build_type.outputs.branch == 'master'
-        run: |
-          curl -H "Authorization: Bearer ${{ secrets.ARTIFACTORY_CURL_TOKEN }}" -X PUT "https://armory.jfrog.io/artifactory/plugins/appname/plugins.json" -T plugins.json
