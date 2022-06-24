@@ -5,6 +5,8 @@ buildscript {
 }
 
 apply plugin: "io.spinnaker.plugin.service-extension"
+apply plugin: "maven-publish"
+apply plugin: "kotlin"
 
 sourceCompatibility = 1.11
 targetCompatibility = 1.11
@@ -13,6 +15,17 @@ spinnakerPlugin {
     serviceName = "clouddriver"
     pluginClass = "io.armory.plugin.eap.EAPPlugin"
     requires = "clouddriver>=0.0.0"
+}
+
+sourceSets {
+    integration {
+        java.srcDir "$projectDir/src/integration/java"
+        kotlin.srcDir "$projectDir/src/integration/kotlin"
+        resources.srcDir "$projectDir/src/integration/resources"
+
+        compileClasspath += main.output + test.output
+        runtimeClasspath += main.output + test.output
+    }
 }
 
 dependencies {
@@ -71,8 +84,31 @@ dependencies {
     testImplementation(group: 'org.mockito', name: 'mockito-core', version: '3.1.0')
     testImplementation(group: 'org.mockito', name: 'mockito-inline', version: '3.1.0')
     testImplementation(group: 'org.codehaus.groovy', name: 'groovy', version: '2.5.11')
+
+    integrationImplementation("com.h2database:h2")
+    integrationImplementation(group: 'io.strikt', name: 'strikt-core', version: '0.22.1')
+    integrationImplementation(group: 'io.spinnaker.kork', name: 'kork-plugins')
+    integrationImplementation(group: 'io.spinnaker.kork', name: 'kork-plugins-tck')
+    integrationImplementation("io.spinnaker.clouddriver:clouddriver-api-tck")
+}
+
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
+    kotlinOptions {
+        languageVersion = "1.3"
+        jvmTarget = "11"
+    }
 }
 
 tasks.withType(Test) {
     useJUnitPlatform()
 }
+
+task integrationTest(type: Test) {
+    description = 'Runs integration tests.'
+    group = 'verification'
+
+    testClassesDirs = sourceSets.integration.output.classesDirs
+    classpath = sourceSets.integration.runtimeClasspath
+}
+
+test.finalizedBy(integrationTest)
