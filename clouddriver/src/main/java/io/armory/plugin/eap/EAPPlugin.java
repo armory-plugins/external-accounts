@@ -26,11 +26,11 @@ import java.util.List;
 public class EAPPlugin extends SpringLoaderPlugin {
 
     private static final String ARMORY_EAP_SPRING_LOADER_BEAN_NAME = "Armory.EAP.com.netflix.spinnaker.kork.plugins.api.spring.SpringLoader";
-    private static final String KUBERNETES_CONFIGURATION_BEAN_NAME = "kubernetesConfiguration";
-    private static final String CLOUDFOUNDRY_CONFIGURATION_BEAN_NAME = "cloudFoundryConfiguration";
-    private static final String AWS_CONFIGURATION_BEAN_NAME = "awsConfiguration";
-    private static final String ECS_CONFIGURATION_BEAN_NAME = "ecsConfiguration";
-    private static final String DOCKER_REGISTRY_CONFIGURATION_BEAN_NAME = "dockerRegistryConfiguration";
+    private static final String KUBERNETES_CONFIGURATION_BEAN_NAME = "kubernetesCredentialsInitializerSynchronizable";
+    private static final String CLOUDFOUNDRY_CONFIGURATION_BEAN_NAME = "cloudFoundryCredentialsInitializerSynchronizable";
+    private static final String AWS_CONFIGURATION_BEAN_NAME = "amazonCredentialsInitializerSynchronizable";
+    private static final String ECS_CONFIGURATION_BEAN_NAME = "ecsCredentialsInializerSynchronizable";
+    private static final String DOCKER_REGISTRY_CONFIGURATION_BEAN_NAME = "dockerRegistryCredentialsInitializerSynchronizable";
 
     /**
      * Constructor to be used by plugin manager for plugin instantiation. Your plugins have to provide

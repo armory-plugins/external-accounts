@@ -9,7 +9,7 @@ armory:
       ssh-private-key-file-path: ${SSH_KEYS}/id_test_rsa
       ssh-private-key-passphrase: PiqPb2m_FodJmV.L
       ssh-known-hosts-file-path: ${SSH_KEYS}/known_hosts
-      ssh-trust-unknown-hosts: false
+      ssh-trust-unknown-hosts: true
 
 credentials:
   poller:
