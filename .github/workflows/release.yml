@@ -28,8 +28,6 @@ jobs:
         run: |
           ./gradlew releaseBundle
           ls -l ./build/distributions
-        env:
-          VERSION_TYPE: release
 
       - name: get project info
         id: get_project_info
