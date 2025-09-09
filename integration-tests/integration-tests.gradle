@@ -52,7 +52,7 @@ dependencies {
   integrationImplementation "mysql:mysql-connector-java:8.0.20"
   integrationImplementation ("io.rest-assured:rest-assured:4.0.0") {
     // Exclude groovy pulled in by rest-assured, so we use kork's version
-    exclude group: "org.codehaus.groovy", module: "groovy"
+    exclude group: "org.apache.groovy", module: "groovy"
   }
   integrationImplementation "org.yaml:snakeyaml:1.26"
   integrationImplementation "org.projectlombok:lombok:1.18.12"
