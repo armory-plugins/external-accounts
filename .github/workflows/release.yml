@@ -54,8 +54,8 @@ jobs:
       - name: rename build artifact
         id: rename_build_artifact
         run: |
-          if [ -e ./build/distributions/${{ steps.get_project_info.outputs.PROJECT }}-*.zip ]
-            then mv ./build/distributions/${{ steps.get_project_info.outputs.PROJECT }}-*.zip ./build/distributions/${{ steps.get_project_info.outputs.PROJECT }}-${{ steps.get_project_info.outputs.VERSION }}.zip
+          if [ -e ./build/distributions/eap-*.zip ]
+            then mv ./build/distributions/eap-*.zip ./build/distributions/${{ steps.get_project_info.outputs.PROJECT }}-${{ steps.get_project_info.outputs.VERSION }}.zip
           fi
 
       - name: upload release asset
