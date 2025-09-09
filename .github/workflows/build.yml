@@ -101,7 +101,7 @@ jobs:
           VERSION_TYPE=${{ steps.build_type.outputs.version_type }} BRANCH=${{ steps.build_type.outputs.branch }} ./gradlew dockerPush
 
       - name: archive build artifacts
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v4
         with:
           name: dist
           path: build/distributions
