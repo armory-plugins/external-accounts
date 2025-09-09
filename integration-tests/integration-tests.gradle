@@ -50,7 +50,7 @@ dependencies {
   }
   integrationImplementation "com.google.guava:guava:28.2-jre"
   integrationImplementation "mysql:mysql-connector-java:8.0.20"
-  integrationImplementation ("io.rest-assured:rest-assured:4.0.0") {
+  integrationImplementation ("io.rest-assured:rest-assured:5.3.0") {
     // Exclude groovy pulled in by rest-assured, so we use kork's version
     exclude group: "org.apache.groovy", module: "groovy"
   }
