@@ -19,9 +19,11 @@ package io.armory.plugin.eap.it.utils;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Splitter;
+import com.google.common.collect.ImmutableMap;
 import org.apache.commons.io.FileUtils;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.ResourceLoader;
+import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.SafeConstructor;
 
@@ -45,7 +47,7 @@ public abstract class TestUtils {
         ResourceLoader resourceLoader = new DefaultResourceLoader();
         try {
             InputStream is = resourceLoader.getResource(file).getInputStream();
-            Yaml yaml = new Yaml(new SafeConstructor());
+            Yaml yaml = new Yaml(new SafeConstructor(new LoaderOptions()));
             Map<String, Object> map = yaml.load(is);
             return new TestResourceFile(map);
         } catch (IOException e) {
@@ -93,7 +95,7 @@ public abstract class TestUtils {
         }
 
         public String asString() {
-            Yaml yaml = new  Yaml();
+            Yaml yaml = new Yaml(new SafeConstructor(new LoaderOptions()));
             return yaml.dump(content);
         }
 
@@ -142,7 +144,7 @@ public abstract class TestUtils {
             ObjectMapper mapper = new ObjectMapper();
             mapper.writeValue(fileWriter, fileContents);
         } else {
-            Yaml yaml = new Yaml(new SafeConstructor());
+            Yaml yaml = new Yaml(new SafeConstructor(new LoaderOptions()));
             yaml.dump(fileContents, fileWriter);
         }
         fileWriter.flush();

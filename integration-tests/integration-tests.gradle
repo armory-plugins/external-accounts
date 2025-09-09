@@ -3,6 +3,11 @@ plugins {
 }
 
 apply plugin: "java-library"
+apply plugin: "groovy"
+
+// Explicitly set Java compatibility for integration tests
+sourceCompatibility = 17
+targetCompatibility = 17
 
 sourceSets {
   integration {
@@ -28,26 +33,6 @@ dependencies {
   integrationImplementation "org.testcontainers:mysql:1.16.2"
   integrationImplementation "org.testcontainers:junit-jupiter:1.16.2"
   integrationImplementation "com.google.code.gson:gson:2.8.6"
-  integrationImplementation("com.fasterxml.jackson.core:jackson-core") {
-    version {
-      strictly '2.12.3'
-    }
-  }
-  integrationImplementation("com.fasterxml.jackson.core:jackson-annotations") {
-    version {
-      strictly '2.12.3'
-    }
-  }
-  integrationImplementation("com.fasterxml.jackson.core:jackson-databind") {
-    version {
-      strictly '2.12.3'
-    }
-  }
-  integrationImplementation("com.fasterxml.jackson.module:jackson-module-kotlin") {
-    version {
-      strictly '2.12.3'
-    }
-  }
   integrationImplementation "com.google.guava:guava:28.2-jre"
   integrationImplementation "mysql:mysql-connector-java:8.0.20"
   integrationImplementation ("io.rest-assured:rest-assured:5.3.0") {
@@ -55,14 +40,22 @@ dependencies {
     exclude group: "org.apache.groovy", module: "groovy"
   }
   integrationImplementation "org.yaml:snakeyaml:1.26"
-  integrationImplementation "org.projectlombok:lombok:1.18.12"
+  integrationImplementation "org.projectlombok:lombok:1.18.30" 
   integrationImplementation "commons-io:commons-io:2.6"
+
+  // Update Jackson dependencies to compatible versions
+  integrationImplementation "com.fasterxml.jackson.core:jackson-core:2.15.2"
+  integrationImplementation "com.fasterxml.jackson.core:jackson-databind:2.15.2"
+  integrationImplementation "com.fasterxml.jackson.core:jackson-annotations:2.15.2"
+  integrationImplementation "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.15.2"
+  integrationImplementation "com.fasterxml.jackson.dataformat:jackson-dataformat-properties:2.15.2"
+  integrationImplementation "com.fasterxml.jackson.module:jackson-module-kotlin:2.15.2"
 }
 
 task integrationTest(type: Test) {
   description = 'Runs integration tests.'
   group = 'verification'
-  dependsOn(':clean', ':releaseBundle')
+  dependsOn ':clean', ':releaseBundle'
 
   environment "PROJECT_ROOT", project.rootDir.toString()
   environment "BUILD_DIR", "$buildDir"
