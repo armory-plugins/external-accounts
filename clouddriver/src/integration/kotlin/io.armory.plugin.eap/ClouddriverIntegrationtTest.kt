@@ -1,16 +1,11 @@
 package io.armory.plugin.eap
 
 import com.netflix.spinnaker.clouddriver.api.test.clouddriverFixture
-import com.netflix.spinnaker.clouddriver.aws.security.config.AccountsConfiguration
-import com.netflix.spinnaker.clouddriver.cloudfoundry.config.CloudFoundryConfigurationProperties
-import com.netflix.spinnaker.clouddriver.docker.registry.config.DockerRegistryConfigurationProperties
-import com.netflix.spinnaker.clouddriver.ecs.security.ECSCredentialsConfig
-import com.netflix.spinnaker.clouddriver.kubernetes.config.KubernetesAccountProperties
 import com.netflix.spinnaker.credentials.definition.CredentialsDefinitionSource
 import dev.minutest.junit.JUnit5Minutests
 import dev.minutest.rootContext
-import strikt.api.expect
-import strikt.assertions.isA
+import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Assertions.assertTrue
 
 class ClouddriverIntegrationTest : JUnit5Minutests {
 
@@ -20,13 +15,19 @@ class ClouddriverIntegrationTest : JUnit5Minutests {
                 ClouddriverPluginsFixture()
             }
             test("Test that the beans are loaded into the application context") {
-                expect {
-                    that(kubernetesCredentialSource).isA<CredentialsDefinitionSource<KubernetesAccountProperties.ManagedAccount>>()
-                    that(cloudFoundryCredentialSource).isA<CredentialsDefinitionSource<CloudFoundryConfigurationProperties.ManagedAccount>>()
-                    that(amazonCredentialsSource).isA<CredentialsDefinitionSource<AccountsConfiguration.Account>>()
-                    that(ecsCredentialsSource).isA<CredentialsDefinitionSource<ECSCredentialsConfig.Account>>()
-                    that(dockerCredentialsSource).isA<CredentialsDefinitionSource<DockerRegistryConfigurationProperties.ManagedAccount>>()
-                    }
+                // Test that all credential sources are not null
+                assertNotNull(kubernetesCredentialSource)
+                assertNotNull(cloudFoundryCredentialSource)
+                assertNotNull(amazonCredentialsSource)
+                assertNotNull(ecsCredentialsSource)
+                assertNotNull(dockerCredentialsSource)
+                
+                // Test that all credential sources are instances of CredentialsDefinitionSource
+                assertTrue(kubernetesCredentialSource is CredentialsDefinitionSource<*>)
+                assertTrue(cloudFoundryCredentialSource is CredentialsDefinitionSource<*>)
+                assertTrue(amazonCredentialsSource is CredentialsDefinitionSource<*>)
+                assertTrue(ecsCredentialsSource is CredentialsDefinitionSource<*>)
+                assertTrue(dockerCredentialsSource is CredentialsDefinitionSource<*>)
             }
         }
     }

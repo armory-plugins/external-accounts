@@ -1,4 +1,4 @@
-FROM debian:buster
+FROM debian:bookworm-slim
 MAINTAINER engineering@armory.io
 
 ARG PLUGIN_ID

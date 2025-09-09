@@ -21,6 +21,7 @@ import org.apache.commons.io.FileUtils;
 import org.springframework.util.FileCopyUtils;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.utility.MountableFile;
+import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.SafeConstructor;
 
@@ -29,6 +30,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -153,7 +155,7 @@ public class GitContainer extends GenericContainer<GitContainer> {
             ObjectMapper mapper = new ObjectMapper();
             mapper.writeValue(fileWriter, fileContents);
         } else {
-            Yaml yaml = new Yaml(new SafeConstructor());
+            Yaml yaml = new Yaml(new SafeConstructor(new LoaderOptions()));
             yaml.dump(fileContents, fileWriter);
         }
         fileWriter.flush();

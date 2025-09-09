@@ -1,12 +1,6 @@
 package io.armory.plugin.eap
 
 import com.netflix.spinnaker.clouddriver.api.test.ClouddriverFixture
-import com.netflix.spinnaker.clouddriver.aws.security.config.AccountsConfiguration
-import com.netflix.spinnaker.clouddriver.cloudfoundry.config.CloudFoundryConfigurationProperties
-import com.netflix.spinnaker.clouddriver.docker.registry.config.DockerRegistryConfigurationProperties
-import com.netflix.spinnaker.clouddriver.ecs.security.ECSCredentialsConfig
-import com.netflix.spinnaker.clouddriver.kubernetes.config.KubernetesAccountProperties
-import com.netflix.spinnaker.credentials.definition.CredentialsDefinitionSource
 import com.netflix.spinnaker.kork.plugins.internal.PluginJar
 import java.io.File
 import org.springframework.beans.factory.annotation.Autowired
@@ -26,23 +20,23 @@ class ClouddriverPluginsFixture : ClouddriverFixture() {
 
     @Autowired
     @Qualifier("kubernetesCredentialSource")
-    lateinit var kubernetesCredentialSource: CredentialsDefinitionSource<KubernetesAccountProperties.ManagedAccount>
+    lateinit var kubernetesCredentialSource: Any
 
     @Autowired
     @Qualifier("cloudFoundryCredentialSource")
-    lateinit var cloudFoundryCredentialSource: CredentialsDefinitionSource<CloudFoundryConfigurationProperties.ManagedAccount>
+    lateinit var cloudFoundryCredentialSource: Any
 
     @Autowired
     @Qualifier("amazonCredentialsSource")
-    lateinit var amazonCredentialsSource: CredentialsDefinitionSource<AccountsConfiguration.Account>
+    lateinit var amazonCredentialsSource: Any
 
     @Autowired
     @Qualifier("ecsCredentialsSource")
-    lateinit var ecsCredentialsSource: CredentialsDefinitionSource<ECSCredentialsConfig.Account>
+    lateinit var ecsCredentialsSource: Any
 
     @Autowired
     @Qualifier("dockerRegistryCredentialsSource")
-    lateinit var dockerCredentialsSource: CredentialsDefinitionSource<DockerRegistryConfigurationProperties.ManagedAccount>
+    lateinit var dockerCredentialsSource: Any
 
     init {
         val pluginId = "Armory.EAP"

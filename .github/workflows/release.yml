@@ -10,8 +10,8 @@ jobs:
     name: Release Plugin
     runs-on: ubuntu-latest
     env:
-      ORG_GRADLE_PROJECT_artifactory_user: '${{secrets.ARTIFACTORY_USER}}'
-      ORG_GRADLE_PROJECT_artifactory_password: '${{secrets.ARTIFACTORY_TOKEN}}'
+      ORG_GRADLE_PROJECT_harness_artifact_user: '${{secrets.HARNESS_ARTIFACT_USER}}'
+      ORG_GRADLE_PROJECT_harness_artifact_password: '${{secrets.HARNESS_ARTIFACT_PASSWORD}}'
     steps:
       - name: checkout code
         uses: actions/checkout@v2

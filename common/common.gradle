@@ -6,8 +6,8 @@ buildscript {
 
 apply plugin: "java-library"
 
-sourceCompatibility = 1.11
-targetCompatibility = 1.11
+sourceCompatibility = 17
+targetCompatibility = 17
 
 dependencies {
     compileOnly(enforcedPlatform("io.spinnaker.clouddriver:clouddriver-bom:${clouddriverVersion}"))
@@ -18,7 +18,7 @@ dependencies {
     compileOnly(group: 'javax.annotation', name: 'javax.annotation-api')
     compileOnly(group: 'org.slf4j', name: 'slf4j-api')
     compileOnly(group: 'commons-io', name: 'commons-io')
-    compileOnly(group: 'org.projectlombok', name: 'lombok', version: '1.18.12')
+    compileOnly(group: 'org.projectlombok', name: 'lombok', version: '1.18.30')
 
-    annotationProcessor(group: 'org.projectlombok', name: 'lombok', version: '1.18.12')
+    annotationProcessor(group: 'org.projectlombok', name: 'lombok', version: '1.18.30')
 }
