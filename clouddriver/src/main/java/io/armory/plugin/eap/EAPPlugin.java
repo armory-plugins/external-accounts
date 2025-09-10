@@ -29,6 +29,7 @@ public class EAPPlugin extends SpringLoaderPlugin {
     private static final String KUBERNETES_CONFIGURATION_BEAN_NAME = "kubernetesCredentialsInitializerSynchronizable";
     private static final String CLOUDFOUNDRY_CONFIGURATION_BEAN_NAME = "cloudFoundryCredentialsInitializerSynchronizable";
     private static final String AWS_CONFIGURATION_BEAN_NAME = "amazonCredentialsInitializerSynchronizable";
+    private static final String AWS_LOADER_BEAN_NAME = "amazonCredentialsLoader";
     private static final String ECS_CONFIGURATION_BEAN_NAME = "ecsCredentialsInializerSynchronizable";
     private static final String DOCKER_REGISTRY_CONFIGURATION_BEAN_NAME = "dockerRegistryCredentialsInitializerSynchronizable";
 
@@ -74,7 +75,7 @@ public class EAPPlugin extends SpringLoaderPlugin {
         }
         if (registry.containsBeanDefinition(ECS_CONFIGURATION_BEAN_NAME)) {
             registry.getBeanDefinition(ECS_CONFIGURATION_BEAN_NAME)
-                    .setDependsOn(ARMORY_EAP_SPRING_LOADER_BEAN_NAME);
+                    .setDependsOn(ARMORY_EAP_SPRING_LOADER_BEAN_NAME, AWS_LOADER_BEAN_NAME, AWS_CONFIGURATION_BEAN_NAME);
         }
         if (registry.containsBeanDefinition(DOCKER_REGISTRY_CONFIGURATION_BEAN_NAME)) {
             registry.getBeanDefinition(DOCKER_REGISTRY_CONFIGURATION_BEAN_NAME)
