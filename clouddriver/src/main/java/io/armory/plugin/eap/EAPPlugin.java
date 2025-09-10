@@ -74,7 +74,7 @@ public class EAPPlugin extends SpringLoaderPlugin {
         }
         if (registry.containsBeanDefinition(ECS_CONFIGURATION_BEAN_NAME)) {
             registry.getBeanDefinition(ECS_CONFIGURATION_BEAN_NAME)
-                    .setDependsOn(ARMORY_EAP_SPRING_LOADER_BEAN_NAME);
+                    .setDependsOn(ARMORY_EAP_SPRING_LOADER_BEAN_NAME, AWS_CONFIGURATION_BEAN_NAME);
         }
         if (registry.containsBeanDefinition(DOCKER_REGISTRY_CONFIGURATION_BEAN_NAME)) {
             registry.getBeanDefinition(DOCKER_REGISTRY_CONFIGURATION_BEAN_NAME)
