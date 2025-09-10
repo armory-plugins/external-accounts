@@ -89,7 +89,7 @@ public class EAPConfiguration {
 
     @Bean
     @ExposeToApp
-    @DependsOn("amazonCredentialsLoader")
+    @DependsOn("amazonCredentialsSource")
     public CredentialsDefinitionSource<ECSCredentialsConfig.Account>
     ecsCredentialsSource(EAPConfigurationProperties configProperties, SecretManager secretManager) {
         if (configProperties.getDir() != null) {
