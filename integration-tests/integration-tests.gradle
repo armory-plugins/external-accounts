@@ -28,7 +28,8 @@ dependencies {
     exclude group: 'com.fasterxml.jackson.module', module: 'jackson-module-kotlin'
   }
 
-  integrationImplementation "org.springframework.boot:spring-boot-starter-test:2.2.5.RELEASE"
+  integrationImplementation "org.springframework.boot:spring-boot-starter-test:3.5.15"
+  integrationRuntimeOnly "org.junit.platform:junit-platform-launcher"
   integrationImplementation "org.testcontainers:testcontainers:1.16.2"
   integrationImplementation "org.testcontainers:mysql:1.16.2"
   integrationImplementation "org.testcontainers:junit-jupiter:1.16.2"

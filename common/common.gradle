@@ -15,7 +15,7 @@ dependencies {
     compileOnly(group: 'com.google.guava', name: 'guava')
     compileOnly(group: 'org.springframework.boot', name: 'spring-boot')
     compileOnly(group: 'com.fasterxml.jackson.core', name: 'jackson-annotations')
-    compileOnly(group: 'javax.annotation', name: 'javax.annotation-api')
+    compileOnly(group: 'jakarta.annotation', name: 'jakarta.annotation-api')
     compileOnly(group: 'org.slf4j', name: 'slf4j-api')
     compileOnly(group: 'commons-io', name: 'commons-io')
     compileOnly(group: 'org.projectlombok', name: 'lombok', version: '1.18.30')

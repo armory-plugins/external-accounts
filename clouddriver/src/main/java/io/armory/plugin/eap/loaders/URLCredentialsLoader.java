@@ -38,6 +38,7 @@ import io.armory.plugin.eap.EAPConfigurationProperties;
 import io.armory.plugin.eap.EAPException;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
+import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.SafeConstructor;
 
@@ -138,7 +139,7 @@ public class URLCredentialsLoader<T extends CredentialsDefinition> implements Cr
                     configMap = mapper.convertValue(jsonNode, javaType);
                     return convertMap(configMap);
                 case YAML:
-                    Yaml yaml = new Yaml(new SafeConstructor());
+                    Yaml yaml = new Yaml(new SafeConstructor(new LoaderOptions()));
                     Object root = yaml.load(reader);
                     if (root instanceof Collection) {
                         return (List<T>) Optional.ofNullable(mapper.convertValue(root, listJavaType)).orElse(new ArrayList<>());
